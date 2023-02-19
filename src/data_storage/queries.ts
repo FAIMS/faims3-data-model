@@ -27,8 +27,8 @@ export async function getAllRecordsOfType(
   project_id: ProjectID,
   type: FAIMSTypeName
 ): Promise<RecordReference[]> {
-  const datadb = await getDataDB(project_id);
-  const res = await datadb.find({
+  const dataDB = await getDataDB(project_id);
+  const res = await dataDB.find({
     selector: {
       record_format_version: 1,
       type: type,
@@ -49,8 +49,8 @@ export async function getAllRecordsWithRegex(
   project_id: ProjectID,
   regex: string
 ): Promise<RecordMetadataList> {
-  const datadb = await getDataDB(project_id);
-  const res = await datadb.find({
+  const dataDB = await getDataDB(project_id);
+  const res = await dataDB.find({
     selector: {
       avp_format_version: 1,
       data: {$regex: regex},

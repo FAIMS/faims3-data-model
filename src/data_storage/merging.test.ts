@@ -80,7 +80,7 @@ describe('test basic automerge', () => {
     const project_id = 'test';
     const fulltype = 'test::test';
     const time = new Date();
-    const userid = 'user';
+    const user_id = 'user';
 
     const record_id = generateFAIMSDataID();
 
@@ -90,8 +90,8 @@ describe('test basic automerge', () => {
       revision_id: null,
       type: fulltype,
       data: {avp1: 1},
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -123,7 +123,7 @@ describe('test basic automerge', () => {
     const project_id = 'test';
     const fulltype = 'test::test';
     const time = new Date();
-    const userid = 'user';
+    const user_id = 'user';
 
     const record_id = generateFAIMSDataID();
 
@@ -133,8 +133,8 @@ describe('test basic automerge', () => {
       revision_id: null,
       type: fulltype,
       data: {avp1: 1},
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -151,8 +151,8 @@ describe('test basic automerge', () => {
       revision_id: revision_id1,
       type: fulltype,
       data: {avp1: 2},
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -169,8 +169,8 @@ describe('test basic automerge', () => {
       revision_id: revision_id2,
       type: fulltype,
       data: {avp1: 3},
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -187,8 +187,8 @@ describe('test basic automerge', () => {
       revision_id: revision_id3,
       type: fulltype,
       data: {avp1: 4},
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -220,7 +220,7 @@ describe('test basic automerge', () => {
     const project_id = 'test';
     const fulltype = 'test::test';
     const time = new Date();
-    const userid = 'user';
+    const user_id = 'user';
 
     const record_id = generateFAIMSDataID();
 
@@ -230,8 +230,8 @@ describe('test basic automerge', () => {
       revision_id: null,
       type: fulltype,
       data: {avp1: 1},
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -248,8 +248,8 @@ describe('test basic automerge', () => {
       revision_id: revision_id1,
       type: fulltype,
       data: {avp1: 2},
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -266,8 +266,8 @@ describe('test basic automerge', () => {
       revision_id: revision_id2,
       type: fulltype,
       data: {avp1: 3},
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -284,8 +284,8 @@ describe('test basic automerge', () => {
       revision_id: revision_id3,
       type: fulltype,
       data: {avp1: 4},
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -299,8 +299,8 @@ describe('test basic automerge', () => {
     const record = await getRecord(project_id, record_id);
     // add all revisions to heads
     record.heads = record.revisions.concat();
-    const datadb = await getDataDB(project_id);
-    await datadb.put(record);
+    const dataDB = await getDataDB(project_id);
+    await dataDB.put(record);
 
     return mergeHeads(project_id, record_id)
       .then(status => {
@@ -322,7 +322,7 @@ describe('test basic automerge', () => {
     const project_id = 'test';
     const fulltype = 'test::test';
     const time = new Date();
-    const userid = 'user';
+    const user_id = 'user';
 
     const record_id = generateFAIMSDataID();
 
@@ -332,8 +332,8 @@ describe('test basic automerge', () => {
       revision_id: null,
       type: fulltype,
       data: {avp1: 1},
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -350,8 +350,8 @@ describe('test basic automerge', () => {
       revision_id: revision_id1,
       type: fulltype,
       data: {avp1: 2},
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -368,8 +368,8 @@ describe('test basic automerge', () => {
       revision_id: revision_id1,
       type: fulltype,
       data: {avp1: 3},
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -386,8 +386,8 @@ describe('test basic automerge', () => {
       revision_id: revision_id3,
       type: fulltype,
       data: {avp1: 2},
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -418,7 +418,7 @@ describe('test basic automerge', () => {
     const project_id = 'test';
     const fulltype = 'test::test';
     const time = new Date();
-    const userid = 'user';
+    const user_id = 'user';
 
     const record_id = generateFAIMSDataID();
 
@@ -428,8 +428,8 @@ describe('test basic automerge', () => {
       revision_id: null,
       type: fulltype,
       data: {avp1: 1},
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -446,8 +446,8 @@ describe('test basic automerge', () => {
       revision_id: revision_id1,
       type: fulltype,
       data: {avp1: 2},
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -464,8 +464,8 @@ describe('test basic automerge', () => {
       revision_id: revision_id1,
       type: fulltype,
       data: {avp1: 3},
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -482,8 +482,8 @@ describe('test basic automerge', () => {
       revision_id: revision_id3,
       type: fulltype,
       data: {avp1: 4},
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -515,7 +515,7 @@ describe('test basic automerge', () => {
     const project_id = 'test';
     const fulltype = 'test::test';
     const time = new Date();
-    const userid = 'user';
+    const user_id = 'user';
 
     const record_id = generateFAIMSDataID();
 
@@ -528,8 +528,8 @@ describe('test basic automerge', () => {
         avp1: 1,
         avp2: 1,
       },
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -550,8 +550,8 @@ describe('test basic automerge', () => {
         avp1: 2,
         avp2: 1,
       },
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -572,8 +572,8 @@ describe('test basic automerge', () => {
         avp1: 1,
         avp2: 2,
       },
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -605,7 +605,7 @@ describe('test basic automerge', () => {
     const project_id = 'test';
     const fulltype = 'test::test';
     const time = new Date();
-    const userid = 'user';
+    const user_id = 'user';
 
     const record_id = generateFAIMSDataID();
 
@@ -618,8 +618,8 @@ describe('test basic automerge', () => {
         avp1: 1,
         avp2: 1,
       },
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -640,8 +640,8 @@ describe('test basic automerge', () => {
         avp1: 2,
         avp2: 1,
       },
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -662,8 +662,8 @@ describe('test basic automerge', () => {
         avp1: 1,
         avp2: 2,
       },
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -684,8 +684,8 @@ describe('test basic automerge', () => {
         avp1: 2,
         avp2: 2,
       },
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -717,7 +717,7 @@ describe('test basic automerge', () => {
     const project_id = 'test';
     const fulltype = 'test::test';
     const time = new Date();
-    const userid = 'user';
+    const user_id = 'user';
 
     const record_id = generateFAIMSDataID();
 
@@ -731,8 +731,8 @@ describe('test basic automerge', () => {
         avp2: 1,
         avp3: 1,
       },
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -755,8 +755,8 @@ describe('test basic automerge', () => {
         avp2: 1,
         avp3: 1,
       },
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -779,8 +779,8 @@ describe('test basic automerge', () => {
         avp2: 2,
         avp3: 1,
       },
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -803,8 +803,8 @@ describe('test basic automerge', () => {
         avp2: 1,
         avp3: 2,
       },
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -827,8 +827,8 @@ describe('test basic automerge', () => {
         avp2: 2,
         avp3: 2,
       },
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -868,7 +868,7 @@ describe('test basic automerge', () => {
     const project_id = 'test';
     const fulltype = 'test::test';
     const time = new Date();
-    const userid = 'user';
+    const user_id = 'user';
 
     const record_id = generateFAIMSDataID();
 
@@ -882,8 +882,8 @@ describe('test basic automerge', () => {
         avp2: 1,
         avp3: 1,
       },
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
     };
@@ -900,8 +900,8 @@ describe('test basic automerge', () => {
         avp2: 1,
         avp3: 1,
       },
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
     };
@@ -918,8 +918,8 @@ describe('test basic automerge', () => {
         avp2: 2,
         avp3: 1,
       },
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
     };
@@ -936,8 +936,8 @@ describe('test basic automerge', () => {
         avp2: 1,
         avp3: 2,
       },
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
     };
@@ -954,8 +954,8 @@ describe('test basic automerge', () => {
         avp2: 2,
         avp3: 2,
       },
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
     };
@@ -983,7 +983,7 @@ describe('test basic automerge', () => {
     const project_id = 'test';
     const fulltype = 'test::test';
     const time = new Date();
-    const userid = 'user';
+    const user_id = 'user';
 
     const record_id = generateFAIMSDataID();
 
@@ -996,8 +996,8 @@ describe('test basic automerge', () => {
         avp1: 1,
         avp2: 1,
       },
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -1018,8 +1018,8 @@ describe('test basic automerge', () => {
         avp1: 2,
         avp2: 1,
       },
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {},
@@ -1037,8 +1037,8 @@ describe('test basic automerge', () => {
         avp1: 1,
         avp2: 2,
       },
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -1050,7 +1050,7 @@ describe('test basic automerge', () => {
 
     const revision_id3 = await upsertFAIMSData(project_id, doc3);
 
-    await setRecordAsDeleted(project_id, record_id, revision_id3, userid);
+    await setRecordAsDeleted(project_id, record_id, revision_id3, user_id);
 
     return mergeHeads(project_id, record_id)
       .then(status => {
@@ -1072,7 +1072,7 @@ describe('test basic automerge', () => {
     const project_id = 'test';
     const fulltype = 'test::test';
     const time = new Date();
-    const userid = 'user';
+    const user_id = 'user';
 
     const record_id = generateFAIMSDataID();
 
@@ -1085,8 +1085,8 @@ describe('test basic automerge', () => {
         avp1: 1,
         avp2: 1,
       },
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -1107,8 +1107,8 @@ describe('test basic automerge', () => {
         avp1: 2,
         avp2: 1,
       },
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -1129,8 +1129,8 @@ describe('test basic automerge', () => {
         avp1: 1,
         avp2: 2,
       },
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {
@@ -1142,8 +1142,8 @@ describe('test basic automerge', () => {
 
     const revision_id3 = await upsertFAIMSData(project_id, doc3);
 
-    await setRecordAsDeleted(project_id, record_id, revision_id2, userid);
-    await setRecordAsDeleted(project_id, record_id, revision_id3, userid);
+    await setRecordAsDeleted(project_id, record_id, revision_id2, user_id);
+    await setRecordAsDeleted(project_id, record_id, revision_id3, user_id);
 
     return mergeHeads(project_id, record_id)
       .then(status => {

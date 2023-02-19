@@ -65,19 +65,19 @@ export function generateFAIMSAttributeValuePairID(): AttributeValuePairID {
 
 export async function updateHeads(
   project_id: ProjectID,
-  obsid: RecordID,
-  base_revids: RevisionID[],
-  new_revid: RevisionID
+  record_id: RecordID,
+  base_revision_id: RevisionID[],
+  new_revision_id: RevisionID
 ) {
-  const datadb = await getDataDB(project_id);
-  const record = await getRecord(project_id, obsid);
+  const dataDB = await getDataDB(project_id);
+  const record = await getRecord(project_id, record_id);
 
   // Add new revision to heads, removing obsolete heads
   // Using set in case we have the revision already (i.e. we're cleaning up
   // heads via a fast-forward merge)
   const heads = new Set<RevisionID>(record.heads);
-  heads.add(new_revid);
-  for (const r of base_revids) {
+  heads.add(new_revision_id);
+  for (const r of base_revision_id) {
     heads.delete(r);
   }
   record.heads = Array.from(heads);
@@ -87,18 +87,18 @@ export async function updateHeads(
   // Using set in case we have the revision already (i.e. we're cleaning up
   // heads via a fast-forward merge)
   const revisions = new Set<RevisionID>(record.revisions);
-  revisions.add(new_revid);
+  revisions.add(new_revision_id);
   record.revisions = Array.from(revisions);
   record.revisions.sort();
 
-  await datadb.put(record);
+  await dataDB.put(record);
 }
 
 async function mergeRecordConflicts(
   project_id: ProjectID,
   record: EncodedRecord
 ): Promise<EncodedRecord> {
-  const datadb = await getDataDB(project_id);
+  const dataDB = await getDataDB(project_id);
 
   // There is no merge functionality in couchdb, you pick a revision and delete
   // the others. Let's use the default revision selected as the base for
@@ -113,7 +113,7 @@ async function mergeRecordConflicts(
   const revisions = new Set<RevisionID>(record.revisions);
 
   // Get the additional conflicted revisions
-  const conflicted_docs = await datadb.get(record._id, {
+  const conflicted_docs = await dataDB.get(record._id, {
     open_revs: record._conflicts,
   });
   const new_docs = [];
@@ -136,19 +136,19 @@ async function mergeRecordConflicts(
   record.revisions = Array.from(revisions);
   record.revisions.sort();
   new_docs.push(record);
-  await datadb.bulkDocs(new_docs);
+  await dataDB.bulkDocs(new_docs);
   return record;
 }
 
 export async function getRecord(
   project_id: ProjectID,
-  obsid: RecordID,
+  record_id: RecordID,
   merge_conflicts = false
 ): Promise<EncodedRecord> {
-  const records = await getRecords(project_id, [obsid]);
-  const record = records[obsid];
+  const records = await getRecords(project_id, [record_id]);
+  const record = records[record_id];
   if (record === undefined) {
-    throw Error(`no such record ${obsid}`);
+    throw Error(`no such record ${record_id}`);
   }
   if (merge_conflicts) {
     return await mergeRecordConflicts(project_id, record);
@@ -184,9 +184,9 @@ export async function getLatestRevision(
   project_id: ProjectID,
   docid: string
 ): Promise<string | undefined> {
-  const datadb = await getDataDB(project_id);
+  const dataDB = await getDataDB(project_id);
   try {
-    const doc = await datadb.get(docid);
+    const doc = await dataDB.get(docid);
     return doc._rev;
   } catch (err) {
     console.error(err);
@@ -297,8 +297,8 @@ export async function getAttributeValuePairs(
   project_id: ProjectID,
   avp_ids: AttributeValuePairID[]
 ): Promise<AttributeValuePairMap> {
-  const datadb = await getDataDB(project_id);
-  const res = await datadb.allDocs({
+  const dataDB = await getDataDB(project_id);
+  const res = await dataDB.allDocs({
     include_docs: true,
     attachments: true,
     binary: true,
@@ -319,8 +319,8 @@ export async function getRevisions(
   project_id: ProjectID,
   revision_ids: RevisionID[]
 ): Promise<RevisionMap> {
-  const datadb = await getDataDB(project_id);
-  const res = await datadb.allDocs({
+  const dataDB = await getDataDB(project_id);
+  const res = await dataDB.allDocs({
     include_docs: true,
     keys: revision_ids,
   });
@@ -339,8 +339,8 @@ export async function getRecords(
   project_id: ProjectID,
   record_ids: RecordID[]
 ): Promise<RecordMap> {
-  const datadb = await getDataDB(project_id);
-  const res = await datadb.allDocs({
+  const dataDB = await getDataDB(project_id);
+  const res = await dataDB.allDocs({
     include_docs: true,
     keys: record_ids,
     conflicts: true,
@@ -367,8 +367,8 @@ function recordToRecordMap(old_recs: RecordMap): EncodedRecordMap {
 export async function getAllRecords(
   project_id: ProjectID
 ): Promise<EncodedRecordMap> {
-  const datadb = await getDataDB(project_id);
-  const res = await datadb.find({
+  const dataDB = await getDataDB(project_id);
+  const res = await dataDB.find({
     selector: {
       record_format_version: 1,
     },
@@ -405,7 +405,7 @@ export async function addNewRevisionFromForm(
   record: Record,
   new_revision_id: RevisionID
 ) {
-  const datadb = await getDataDB(project_id);
+  const dataDB = await getDataDB(project_id);
   const avp_map = await addNewAttributeValuePairs(
     project_id,
     record,
@@ -424,7 +424,7 @@ export async function addNewRevisionFromForm(
     ugc_comment: record.ugc_comment,
     relationship: record.relationship,
   };
-  await datadb.put(new_revision);
+  await dataDB.put(new_revision);
 }
 
 async function addNewAttributeValuePairs(
@@ -432,7 +432,7 @@ async function addNewAttributeValuePairs(
   record: Record,
   new_revision_id: RevisionID
 ): Promise<AttributeValuePairIDMap> {
-  const datadb = await getDataDB(project_id);
+  const dataDB = await getDataDB(project_id);
   const avp_map: AttributeValuePairIDMap = {};
   let revision;
   let data;
@@ -488,7 +488,7 @@ async function addNewAttributeValuePairs(
       }
     }
   }
-  await datadb.bulkDocs(docs_to_dump);
+  await dataDB.bulkDocs(docs_to_dump);
   return avp_map;
 }
 
@@ -497,7 +497,7 @@ export async function createNewRecord(
   record: Record,
   revision_id: RevisionID
 ) {
-  const datadb = await getDataDB(project_id);
+  const dataDB = await getDataDB(project_id);
   const new_encoded_record = {
     _id: record.record_id,
     record_format_version: 1,
@@ -508,7 +508,7 @@ export async function createNewRecord(
     type: record.type,
   };
   try {
-    await datadb.put(new_encoded_record);
+    await dataDB.put(new_encoded_record);
   } catch (err) {
     // TODO: add proper error handling for conflicts
     console.warn(err);
@@ -533,8 +533,8 @@ async function loadAttributeValuePair(
     return avp;
   }
   const ids_to_get = attach_refs.map(ref => ref.attachment_id);
-  const datadb = await getDataDB(project_id);
-  const res = await datadb.allDocs({
+  const dataDB = await getDataDB(project_id);
+  const res = await dataDB.allDocs({
     include_docs: true,
     attachments: true,
     binary: true,

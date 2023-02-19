@@ -33,7 +33,7 @@ import {
   ProjectID,
   RevisionID,
   FAIMSTypeName,
-  DEFAULT_REALTION_LINK_VOCAB,
+  DEFAULT_RELATION_LINK_VOCABULARY,
 } from '../datamodel/core';
 import {Revision} from '../datamodel/database';
 import {Record, RecordMetadata, RecordReference} from '../datamodel/ui';
@@ -70,7 +70,7 @@ export function generateFAIMSDataID(): RecordID {
  * Get the revision id of the most recent revision of a record
  * @param project_id project identifier
  * @param record_id record identifier
- * @returns a promise resolving to a revisionid for the record
+ * @returns a promise resolving to a revision id for the record
  */
 export async function getFirstRecordHead(
   project_id: ProjectID,
@@ -177,15 +177,15 @@ export async function listFAIMSRecordRevisions(
 export async function listFAIMSProjectRevisions(
   project_id: ProjectID
 ): Promise<ProjectRevisionListing> {
-  const datadb = await getDataDB(project_id);
+  const dataDB = await getDataDB(project_id);
   try {
-    const result = await datadb.allDocs();
-    const revmap: ProjectRevisionListing = {};
+    const result = await dataDB.allDocs();
+    const revisionMap: ProjectRevisionListing = {};
     for (const row of result.rows) {
       const _id: RecordID = row.key;
-      revmap[_id] = await listFAIMSRecordRevisions(project_id, _id);
+      revisionMap[_id] = await listFAIMSRecordRevisions(project_id, _id);
     }
-    return revmap;
+    return revisionMap;
   } catch (err) {
     console.warn('failed to list data in project', project_id, err);
     throw Error('failed to list data in project');
@@ -195,7 +195,7 @@ export async function listFAIMSProjectRevisions(
 export async function deleteFAIMSDataForID(
   project_id: ProjectID,
   record_id: RecordID,
-  userid: string
+  user_id: string
 ): Promise<RevisionID> {
   const record = await getRecord(project_id, record_id);
   if (record.heads.length !== 1) {
@@ -206,14 +206,14 @@ export async function deleteFAIMSDataForID(
       project_id,
       record_id,
       record.heads[0],
-      userid
+      user_id
     );
   } catch (err) {
     console.warn(
       'failed to delete data with id',
       project_id,
       record_id,
-      userid,
+      user_id,
       err
     );
     throw Error('failed to delete data with id');
@@ -223,7 +223,7 @@ export async function deleteFAIMSDataForID(
 export async function undeleteFAIMSDataForID(
   project_id: ProjectID,
   record_id: RecordID,
-  userid: string
+  user_id: string
 ): Promise<RevisionID> {
   const record = await getRecord(project_id, record_id);
   if (record.heads.length !== 1) {
@@ -234,14 +234,14 @@ export async function undeleteFAIMSDataForID(
       project_id,
       record_id,
       record.heads[0],
-      userid
+      user_id
     );
   } catch (err) {
     console.warn(
       'failed to undelete data with id',
       project_id,
       record_id,
-      userid,
+      user_id,
       err
     );
     throw Error('failed to undelete data with id');
@@ -250,55 +250,55 @@ export async function undeleteFAIMSDataForID(
 
 export async function setRecordAsDeleted(
   project_id: ProjectID,
-  obsid: RecordID,
-  base_revid: RevisionID,
+  record_id: RecordID,
+  base_revision_id: RevisionID,
   user: string
 ): Promise<RevisionID> {
-  const datadb = await getDataDB(project_id);
+  const dataDB = await getDataDB(project_id);
   const date = new Date();
-  const base_revision = await getRevision(project_id, base_revid);
+  const base_revision = await getRevision(project_id, base_revision_id);
   const new_rev_id = generateFAIMSRevisionID();
   const new_revision: Revision = {
     _id: new_rev_id,
     revision_format_version: 1,
     avps: base_revision.avps,
     type: base_revision.type,
-    record_id: obsid,
-    parents: [base_revid],
+    record_id: record_id,
+    parents: [base_revision_id],
     created: date.toISOString(),
     created_by: user,
     deleted: true,
     relationship: base_revision.relationship,
   };
-  await datadb.put(new_revision);
-  await updateHeads(project_id, obsid, [base_revision._id], new_rev_id);
+  await dataDB.put(new_revision);
+  await updateHeads(project_id, record_id, [base_revision._id], new_rev_id);
   return new_rev_id;
 }
 
 export async function setRecordAsUndeleted(
   project_id: ProjectID,
-  obsid: RecordID,
-  base_revid: RevisionID,
+  record_id: RecordID,
+  base_revision_id: RevisionID,
   user: string
 ): Promise<RevisionID> {
-  const datadb = await getDataDB(project_id);
+  const dataDB = await getDataDB(project_id);
   const date = new Date();
-  const base_revision = await getRevision(project_id, base_revid);
+  const base_revision = await getRevision(project_id, base_revision_id);
   const new_rev_id = generateFAIMSRevisionID();
   const new_revision: Revision = {
     _id: new_rev_id,
     revision_format_version: 1,
     avps: base_revision.avps,
     type: base_revision.type,
-    record_id: obsid,
-    parents: [base_revid],
+    record_id: record_id,
+    parents: [base_revision_id],
     created: date.toISOString(),
     created_by: user,
     deleted: false,
     relationship: base_revision.relationship,
   };
-  await datadb.put(new_revision);
-  await updateHeads(project_id, obsid, [base_revision._id], new_rev_id);
+  await dataDB.put(new_revision);
+  await updateHeads(project_id, record_id, [base_revision._id], new_rev_id);
   return new_rev_id;
 }
 
@@ -367,8 +367,8 @@ export async function getRecordsByType(
     let relation_vocab: string[] | null = null;
     if (relation_type !== 'faims-core::Child') {
       relation_vocab = [
-        DEFAULT_REALTION_LINK_VOCAB,
-        DEFAULT_REALTION_LINK_VOCAB,
+        DEFAULT_RELATION_LINK_VOCABULARY,
+        DEFAULT_RELATION_LINK_VOCABULARY,
       ]; //default value of the linked items
       if (
         relation_linked_vocabPair !== null &&

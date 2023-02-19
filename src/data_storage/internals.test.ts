@@ -73,7 +73,7 @@ describe('test internals', () => {
     const project_id = 'test';
     const fulltype = 'test::test';
     const time = new Date();
-    const userid = 'user';
+    const user_id = 'user';
 
     const record_id = generateFAIMSDataID();
 
@@ -84,8 +84,8 @@ describe('test internals', () => {
       revision_id: null,
       type: fulltype,
       data: {avp1: 1},
-      created_by: userid,
-      updated_by: userid,
+      created_by: user_id,
+      updated_by: user_id,
       created: time,
       updated: time,
       annotations: {

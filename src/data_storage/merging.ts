@@ -26,6 +26,7 @@ import {
   RecordID,
   ProjectID,
   RevisionID,
+  LinkedRelation,
 } from '../datamodel/core';
 import {
   AttributeValuePairIDMap,
@@ -227,7 +228,7 @@ export async function do3WayMerge(
 ): Promise<MergeResult> {
   console.debug(`merging ${us_id} and ${them_id}`);
   
-  const datadb = await getDataDB(project_id);
+  const dataDB = await getDataDB(project_id);
   const avp_map: AttributeValuePairIDMap = {};
   const merge_result = new MergeResult();
   const them = await getCachedRevision(project_id, revision_cache, them_id);
@@ -250,7 +251,7 @@ export async function do3WayMerge(
     merge_result.set_no_merge();
   }
 
-  let parent = undefined;
+  let parent: LinkedRelation | undefined = undefined;
   const them_parent = them.relationship?.parent ?? undefined;
   const us_parent = us.relationship?.parent ?? undefined;
   const base_parent = base.relationship?.parent ?? undefined;
@@ -266,7 +267,7 @@ export async function do3WayMerge(
     parent = us_parent;
   }
 
-  let linked = undefined;
+  let linked: LinkedRelation[] | undefined = undefined;
   const them_linked = them.relationship?.linked ?? undefined;
   const us_linked = us.relationship?.linked ?? undefined;
   const base_linked = base.relationship?.linked ?? undefined;
@@ -348,7 +349,7 @@ export async function do3WayMerge(
         linked: linked,
       },
     };
-    await datadb.put(new_revision);
+    await dataDB.put(new_revision);
     await updateHeads(project_id, us.record_id, parents, new_revision_id);
   }
   return merge_result;
@@ -503,8 +504,8 @@ export async function getInitialMergeDetails(
   record_id: RecordID
 ): Promise<InitialMergeDetails | null> {
   const record = await getRecord(project_id, record_id);
-  const available_revisons = await getRevisions(project_id, record.heads);
-  const sorted_revisions = sortRevisionsForInitialMerge(available_revisons);
+  const available_revisions = await getRevisions(project_id, record.heads);
+  const sorted_revisions = sortRevisionsForInitialMerge(available_revisions);
   const initial_head_details = await findInitialMergeDetails(
     project_id,
     record_id,
@@ -542,11 +543,11 @@ export async function findConflictingFields(
 
   const initial_revision = revisions[revision_id];
 
-  for (const revid_to_compare of record.heads) {
-    if (revid_to_compare === revision_id) {
+  for (const revision_id_to_compare of record.heads) {
+    if (revision_id_to_compare === revision_id) {
       continue;
     }
-    const rev_to_compare = revisions[revid_to_compare];
+    const rev_to_compare = revisions[revision_id_to_compare];
     for (const [field_name, avp_id] of Object.entries(initial_revision.avps)) {
       if (avp_id !== rev_to_compare.avps[field_name]) {
         conflicting_fields.add(field_name);
@@ -590,7 +591,7 @@ async function getAVPMapFromMergeResult(
     merge_result.field_choices
   )) {
     if (avp_id === null) {
-      const datadb = await getDataDB(merge_result.project_id);
+      const dataDB = await getDataDB(merge_result.project_id);
       const new_avp_id = generateFAIMSAttributeValuePairID();
       const new_avp = {
         _id: new_avp_id,
@@ -603,7 +604,7 @@ async function getAVPMapFromMergeResult(
         created: merge_result.updated.toISOString(),
         created_by: merge_result.updated_by,
       };
-      await datadb.put(new_avp);
+      await dataDB.put(new_avp);
       avp_map[field_name] = new_avp_id;
     } else {
       avp_map[field_name] = avp_id;
@@ -623,7 +624,7 @@ export async function saveUserMergeResult(merge_result: UserMergeResult) {
 
   const revision_id = generateFAIMSRevisionID();
 
-  const datadb = await getDataDB(project_id);
+  const dataDB = await getDataDB(project_id);
   const avp_map = await getAVPMapFromMergeResult(merge_result, revision_id);
 
   const new_revision: Revision = {
@@ -638,7 +639,7 @@ export async function saveUserMergeResult(merge_result: UserMergeResult) {
     type: type,
     relationship: merge_result.relationship,
   };
-  await datadb.put(new_revision);
+  await dataDB.put(new_revision);
 
   await updateHeads(project_id, record_id, parents, revision_id);
 

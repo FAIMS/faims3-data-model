@@ -123,7 +123,7 @@ export type Annotations = any;
 
 export const HRID_STRING = 'hrid';
 
-export const DEFAULT_REALTION_LINK_VOCAB = 'is related to';
+export const DEFAULT_RELATION_LINK_VOCABULARY = 'is related to';
 
 export interface TokenInfo {
   token: string;

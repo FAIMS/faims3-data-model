@@ -7,5 +7,12 @@
     "test": "jest"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@types/pouchdb": "^6.4.0",
+    "pouchdb": "^8.0.1"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.0"
+  }
 }
