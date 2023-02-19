@@ -1,0 +1,11 @@
+{
+  "name": "faims3-datamodel",
+  "version": "1.0.0",
+  "description": "Database access layer for FAIMS3",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC"
+}
