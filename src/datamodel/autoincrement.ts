@@ -23,8 +23,7 @@
 // database it came from, for a FAIMS listing
 // (It is this way because the list of projects is decentralised and so we
 // cannot enforce system-wide unique project IDs without a 'namespace' listing id)
-import {getProjectDB} from '../sync/index';
-import {local_state_db} from '../sync/databases';
+import {getProjectDB, getLocalStateDB} from '../index';
 import {ProjectID} from './core';
 import {
   LOCAL_AUTOINCREMENT_PREFIX,
@@ -65,6 +64,7 @@ export async function get_local_autoincrement_state_for_field(
 ): Promise<LocalAutoIncrementState> {
   const pouch_id = get_pouch_id(project_id, form_id, field_id);
   try {
+    const local_state_db = getLocalStateDB();
     return await local_state_db.get(pouch_id);
   } catch (err: any) {
     if (err.status === 404) {
@@ -87,6 +87,7 @@ export async function set_local_autoincrement_state_for_field(
   new_state: LocalAutoIncrementState
 ) {
   try {
+    const local_state_db = getLocalStateDB();
     return await local_state_db.put(new_state);
   } catch (err) {
     logError(err);

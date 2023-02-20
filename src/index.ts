@@ -1,0 +1,75 @@
+/*
+ * Copyright 2021, 2022 Macquarie University
+ *
+ * Licensed under the Apache License Version 2.0 (the, "License");
+ * you may not use, this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing software
+ * distributed under the License is distributed on an "AS IS" BASIS
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND either express or implied.
+ * See, the License, for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Filename: index.ts
+ * Description:
+ *   Main entry point for the module.
+ */
+
+import {ProjectID} from './datamodel/core';
+import {RecordMetadata} from './datamodel/ui';
+import {logError} from './logging';
+
+export type DBCallbackObject = {
+  getDataDB: CallableFunction;
+  getProjectDB: CallableFunction;
+  shouldDisplayRecord: CallableFunction;
+  getLocalStateDB: CallableFunction;
+};
+
+let moduleCallback: DBCallbackObject;
+
+export const registerClient = (callbacks: DBCallbackObject) => {
+  moduleCallback = callbacks;
+};
+
+export const getDataDB = (project_id: ProjectID) => {
+  if (moduleCallback) {
+    return moduleCallback.getDataDB(project_id);
+  } else {
+    logError('No callback registered to get data database');
+    return undefined;
+  }
+};
+
+export const getProjectDB = (project_id: ProjectID) => {
+  if (moduleCallback) {
+    return moduleCallback.getProjectDB(project_id);
+  } else {
+    logError('No callback registered to get project database');
+    return undefined;
+  }
+};
+
+export const shouldDisplayRecord = (
+  project_id: ProjectID,
+  record_metadata: RecordMetadata
+) => {
+  if (moduleCallback) {
+    return moduleCallback.shouldDisplayRecord(project_id, record_metadata);
+  } else {
+    logError('No callback registered to check record permissions');
+    return undefined;
+  }
+};
+
+export const getLocalStateDB = () => {
+  if (moduleCallback) {
+    return moduleCallback.getLocalStateDB();
+  } else {
+    logError('No callback registered to get local state DB');
+    return undefined;
+  }
+};

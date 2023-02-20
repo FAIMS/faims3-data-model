@@ -22,7 +22,7 @@
  *  persistent state will be updated when record been saved( to be discussed)
  */
 
-import {local_state_db} from '../sync/databases';
+import {getLocalStateDB} from '../index';
 import {ProjectID} from './core';
 import {LOCAL_FIELDpersistent_PREFIX} from './database';
 import {fieldpersistentdata} from './ui';
@@ -39,6 +39,7 @@ export async function get_fieldpersistentdata(
 ): Promise<fieldpersistentdata> {
   const pouch_id = get_pouch_id(project_id, form_id);
   try {
+    const local_state_db = getLocalStateDB();
     return await local_state_db.get(pouch_id);
   } catch (err: any) {
     if (err.status === 404) {
@@ -71,6 +72,7 @@ export async function set_fieldpersistentdata(
   doc.data = new_state.data;
   doc.annotations = new_state.annotations;
   try {
+    const local_state_db = getLocalStateDB();
     return await local_state_db.put(doc);
   } catch (err: any) {
     logError(err);

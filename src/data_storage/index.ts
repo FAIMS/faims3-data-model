@@ -27,7 +27,7 @@
 
 import {v4 as uuidv4} from 'uuid';
 
-import {getDataDB} from '../sync';
+import {getDataDB} from '../index';
 import {
   RecordID,
   ProjectID,
@@ -37,7 +37,7 @@ import {
 } from '../datamodel/core';
 import {Revision} from '../datamodel/database';
 import {Record, RecordMetadata, RecordReference} from '../datamodel/ui';
-import {shouldDisplayRecord} from '../users';
+import {shouldDisplayRecord} from '../index';
 import {
   addNewRevisionFromForm,
   createNewRecord,
@@ -449,7 +449,6 @@ async function filterRecordMetadata(
   const new_record_list: RecordMetadata[] = [];
   for (const metadata of record_list) {
     console.debug('Records', metadata);
-    
     if (
       !(metadata.deleted && filter_deleted) &&
       (await shouldDisplayRecord(project_id, metadata))

@@ -126,11 +126,16 @@ export function setAttachmentDumperForType(
   attachment_dumpers[type] = dumper;
 }
 
+
+// TODO: testing under node I get the error that Blob is not defined
+//    so might need to modify this test to have it work on both
+//    browser and node environments
 function isAttachment(a: any): boolean {
-  if (a instanceof Blob) {
-    return true;
-  }
   return false;
+  // if (a instanceof Blob) {
+  //   return true;
+  // }
+  // return false;
 }
 
 /*

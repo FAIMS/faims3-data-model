@@ -25,7 +25,9 @@
  * @module datamodel/core
  * @category Data Model
  */
-import type {KeyLike} from 'jose';
+
+// import type {KeyLike} from 'jose';
+type KeyLike = string; // this is the same type but might not be enough for import
 
 // There are two internal IDs for projects, the former is unique to the system
 // (i.e. includes the listing_id), the latter is unique only to the 'projects'

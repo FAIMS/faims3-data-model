@@ -20,7 +20,7 @@
  *   merging by humans.
  */
 
-import {getDataDB} from '../sync';
+import {getDataDB} from '../index';
 import {
   FAIMSTypeName,
   RecordID,
@@ -227,7 +227,6 @@ export async function do3WayMerge(
   us_id: RevisionID
 ): Promise<MergeResult> {
   console.debug(`merging ${us_id} and ${them_id}`);
-  
   const dataDB = await getDataDB(project_id);
   const avp_map: AttributeValuePairIDMap = {};
   const merge_result = new MergeResult();
@@ -297,12 +296,7 @@ export async function do3WayMerge(
     if (our_avp_id === undefined) {
       throw Error(`our_avp ${attr} is undefined`);
     }
-    console.debug(
-        'base, theirs, ours',
-        base_avp_id,
-        their_avp_id,
-        our_avp_id
-      );
+    console.debug('base, theirs, ours', base_avp_id, their_avp_id, our_avp_id);
     if (their_avp_id === our_avp_id) {
       // The avp is the same on both heads, the trivial case
       avp_map[attr] = our_avp_id;
@@ -368,18 +362,18 @@ export async function mergeHeads(
     initial_cache_size
   );
   console.debug(
-      'Getting initial revisions',
-      project_id,
-      record_id,
-      revision_ids_to_seed_cache
-    );
+    'Getting initial revisions',
+    project_id,
+    record_id,
+    revision_ids_to_seed_cache
+  );
   const revision_cache: RevisionCache = (await getRevisions(
     project_id,
     revision_ids_to_seed_cache
   )) as RevisionCache;
   const working_heads = record.heads.concat(); // make a clean copy
   console.debug('Getting initial head revisions', project_id, record_id);
-  
+
   const initial_head_revisions = await getRevisions(project_id, working_heads);
   for (const rev_id in working_heads) {
     revision_cache[rev_id] = initial_head_revisions[rev_id];
@@ -395,7 +389,7 @@ export async function mergeHeads(
       break;
     }
     console.debug(`merging ${us_id}`);
-    
+
     const to_merge_heads = working_heads.concat();
     for (const them_index in to_merge_heads) {
       const pairwise_merge_result: MergeResult = await do3WayMerge(

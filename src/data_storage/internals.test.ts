@@ -20,6 +20,7 @@
  */
 
 import PouchDB from 'pouchdb';
+import {registerClient} from '..';
 
 import {ProjectID, HRID_STRING} from '../datamodel/core';
 import {Record} from '../datamodel/ui';
@@ -29,21 +30,46 @@ import {getHRID, getRecord, getRevision} from './internals';
 
 PouchDB.plugin(require('pouchdb-adapter-memory')); // enable memory adapter for testing
 
-const projdbs: any = {};
+const databaseList: any = {};
 
-async function mockDataDB(project_id: ProjectID) {
-  if (projdbs[project_id] === undefined) {
-    const db = new PouchDB(project_id, {adapter: 'memory'});
-    projdbs[project_id] = db;
+const getDatabase = async (databaseName: string) => {
+  if (databaseList[databaseName] === undefined) {
+    const db = new PouchDB(databaseName, {adapter: 'memory'});
+    databaseList[databaseName] = db;
   }
-  return projdbs[project_id];
-}
+  return databaseList[databaseName];
+};
+
+const mockGetDataDB = async (project_id: ProjectID) => {
+  const databaseName = 'data-' + project_id;
+  return getDatabase(databaseName);
+};
+
+const mockGetProjectDB = async (project_id: ProjectID) => {
+  return getDatabase('project-' + project_id);
+};
+
+const mockGetLocalStateDB = async () => {
+  return getDatabase('local-state');
+};
+
+const mockShouldDisplayRecord = () => {
+  return true;
+};
+
+// register our mock database clients with the module
+registerClient({
+  getDataDB: mockGetDataDB,
+  getProjectDB: mockGetProjectDB,
+  shouldDisplayRecord: mockShouldDisplayRecord,
+  getLocalStateDB: mockGetLocalStateDB,
+});
 
 async function cleanDataDBS() {
-  let db;
-  for (const project_id in projdbs) {
-    db = projdbs[project_id];
-    delete projdbs[project_id];
+  let db: PouchDB.Database;
+  for (const name in databaseList) {
+    db = databaseList[name];
+    delete databaseList[name];
 
     if (db !== undefined) {
       try {
@@ -55,10 +81,6 @@ async function cleanDataDBS() {
     }
   }
 }
-
-jest.mock('../sync/index', () => ({
-  getDataDB: mockDataDB,
-}));
 
 beforeEach(async () => {
   return await cleanDataDBS();

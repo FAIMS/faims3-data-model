@@ -17,7 +17,7 @@
  * Description:
  *   Functions to query specific information from pouchdb
  */
-import {getDataDB} from '../sync';
+import {getDataDB} from '../index';
 import {ProjectID, FAIMSTypeName, RecordID} from '../datamodel/core';
 import {AttributeValuePair} from '../datamodel/database';
 import {RecordReference, RecordMetadataList} from '../datamodel/ui';
@@ -36,7 +36,7 @@ export async function getAllRecordsOfType(
   });
   console.log(res);
   // const hrid = (await getHRID(project_id, o.revision)) ;
-  return res.docs.map(o => {
+  return res.docs.map((o: any) => {
     return {
       project_id: project_id,
       record_id: o._id,
@@ -56,7 +56,7 @@ export async function getAllRecordsWithRegex(
       data: {$regex: regex},
     },
   });
-  const record_ids = res.docs.map(o => {
+  const record_ids = res.docs.map((o: any) => {
     const avp = o as AttributeValuePair;
     return avp.record_id;
   });

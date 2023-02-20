@@ -20,7 +20,7 @@
 
 import {v4 as uuidv4} from 'uuid';
 
-import {getDataDB} from '../sync';
+import {getDataDB} from '../index';
 import {
   AttributeValuePairID,
   RecordID,
@@ -116,7 +116,7 @@ async function mergeRecordConflicts(
   const conflicted_docs = await dataDB.get(record._id, {
     open_revs: record._conflicts,
   });
-  const new_docs = [];
+  const new_docs: EncodedRecord[] = [];
   for (const doc of conflicted_docs) {
     const tmp_rec = doc.ok as EncodedRecord;
     // Add heads
@@ -269,7 +269,7 @@ export async function listRecordMetadata(
           ? record_id
           : (await getHRID(project_id, revision)) ?? record_id;
       console.debug('hrid:', hrid);
-      
+
       out[record_id] = {
         project_id: project_id,
         record_id: record_id,
@@ -326,7 +326,7 @@ export async function getRevisions(
   });
   const rows = res.rows;
   const mapping: RevisionMap = {};
-  rows.forEach(e => {
+  rows.forEach((e: any) => {
     if (e.doc !== undefined) {
       const doc = e.doc as Revision;
       mapping[doc._id] = doc;
@@ -347,7 +347,7 @@ export async function getRecords(
   });
   const rows = res.rows;
   const mapping: RecordMap = {};
-  rows.forEach(e => {
+  rows.forEach((e: any)  => {
     if (e.doc !== undefined) {
       const doc = e.doc as EncodedRecord;
       mapping[doc._id] = doc;
@@ -374,7 +374,7 @@ export async function getAllRecords(
     },
   });
   const records: EncodedRecordMap = new Map();
-  res.docs.map(o => {
+  res.docs.map((o: any)  => {
     records.set(o._id, o as EncodedRecord);
   });
   return records;
@@ -474,10 +474,10 @@ async function addNewAttributeValuePairs(
       avp_map[field_name] = new_avp_id;
     } else {
       console.debug(
-          'Using existing AVP, the following are equal',
-          stored_data,
-          field_value
-        );
+        'Using existing AVP, the following are equal',
+        stored_data,
+        field_value
+      );
       if (revision.avps !== undefined) {
         avp_map[field_name] = revision.avps[field_name];
       } else {
@@ -542,7 +542,7 @@ async function loadAttributeValuePair(
   });
   const rows = res.rows;
   const attach_docs: FAIMSAttachment[] = [];
-  rows.forEach(e => {
+  rows.forEach((e: any) => {
     if (e.doc !== undefined) {
       const doc = e.doc as FAIMSAttachment;
       attach_docs.push(doc);
