@@ -374,7 +374,7 @@ export async function getAllRecords(
     },
   });
   const records: EncodedRecordMap = new Map();
-  res.docs.map((o: any)  => {
+  res.docs.map((o: any) => {
     records.set(o._id, o as EncodedRecord);
   });
   return records;

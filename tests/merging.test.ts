@@ -18,9 +18,6 @@
  *   TODO
  */
 
-import PouchDB from 'pouchdb';
-
-import {ProjectID} from '../src/datamodel/core';
 import {Record} from '../src/datamodel/ui';
 import {
   generateFAIMSDataID,
@@ -30,60 +27,13 @@ import {
 import {getRecord, getRevision} from '../src/data_storage/internals';
 import {mergeHeads} from '../src/data_storage/merging';
 import {registerClient} from '../src';
-
-PouchDB.plugin(require('pouchdb-adapter-memory')); // enable memory adapter for testing
-
-const databaseList: any = {};
-
-const getDatabase = async (databaseName: string) => {
-  if (databaseList[databaseName] === undefined) {
-    const db = new PouchDB(databaseName, {adapter: 'memory'});
-    databaseList[databaseName] = db;
-  }
-  return databaseList[databaseName];
-};
-
-const mockGetDataDB = async (project_id: ProjectID) => {
-  const databaseName = 'data-' + project_id;
-  return getDatabase(databaseName);
-};
-
-const mockGetProjectDB = async (project_id: ProjectID) => {
-  return getDatabase('project-' + project_id);
-};
-
-const mockGetLocalStateDB = async () => {
-  return getDatabase('local-state');
-};
-
-const mockShouldDisplayRecord = () => {
-  return true;
-};
+import {callbackObject, cleanDataDBS} from './mocks';
 
 // register our mock database clients with the module
-registerClient({
-  getDataDB: mockGetDataDB,
-  getProjectDB: mockGetProjectDB,
-  shouldDisplayRecord: mockShouldDisplayRecord,
-  getLocalStateDB: mockGetLocalStateDB,
-});
+registerClient(callbackObject);
 
-async function cleanDataDBS() {
-  let db: PouchDB.Database;
-  for (const name in databaseList) {
-    db = databaseList[name];
-    delete databaseList[name];
-
-    if (db !== undefined) {
-      try {
-        await db.destroy();
-        //await db.close();
-      } catch (err) {
-        console.error(err);
-      }
-    }
-  }
-}
+// disable debug output for tests
+console.debug = () => {};
 
 beforeEach(async () => {
   return await cleanDataDBS();
@@ -319,7 +269,7 @@ describe('test basic automerge', () => {
     const record = await getRecord(project_id, record_id);
     // add all revisions to heads
     record.heads = record.revisions.concat();
-    const dataDB = await mockGetDataDB(project_id);
+    const dataDB = await callbackObject.getDataDB(project_id);
     await dataDB.put(record);
 
     return mergeHeads(project_id, record_id)

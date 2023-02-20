@@ -95,11 +95,11 @@ export async function upsertFAIMSData(
   }
   const revision_id = generateFAIMSRevisionID();
   if (record.revision_id === null) {
-    console.info('New record', record);
+    //console.info('New record', record);
     await createNewRecord(project_id, record, revision_id);
     await addNewRevisionFromForm(project_id, record, revision_id);
   } else {
-    console.info('Update existing record', record);
+    //console.info('Update existing record', record);
     await addNewRevisionFromForm(project_id, record, revision_id);
     await updateHeads(
       project_id,

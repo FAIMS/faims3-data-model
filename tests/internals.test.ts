@@ -19,68 +19,22 @@
  *
  */
 
-import PouchDB from 'pouchdb';
 import {registerClient} from '../src';
 
-import {ProjectID, HRID_STRING} from '../src/datamodel/core';
+import {HRID_STRING} from '../src/datamodel/core';
 import {Record} from '../src/datamodel/ui';
 import {generateFAIMSDataID, upsertFAIMSData} from '../src/data_storage/index';
 
-import {getHRID, getRecord, getRevision} from '../src/data_storage/internals';
-
-PouchDB.plugin(require('pouchdb-adapter-memory')); // enable memory adapter for testing
-
-const databaseList: any = {};
-
-const getDatabase = async (databaseName: string) => {
-  if (databaseList[databaseName] === undefined) {
-    const db = new PouchDB(databaseName, {adapter: 'memory'});
-    databaseList[databaseName] = db;
-  }
-  return databaseList[databaseName];
-};
-
-const mockGetDataDB = async (project_id: ProjectID) => {
-  const databaseName = 'data-' + project_id;
-  return getDatabase(databaseName);
-};
-
-const mockGetProjectDB = async (project_id: ProjectID) => {
-  return getDatabase('project-' + project_id);
-};
-
-const mockGetLocalStateDB = async () => {
-  return getDatabase('local-state');
-};
-
-const mockShouldDisplayRecord = () => {
-  return true;
-};
+import {
+  getHRID,
+  getLatestRevision,
+  getRecord,
+  getRevision,
+} from '../src/data_storage/internals';
+import {callbackObject, cleanDataDBS} from './mocks';
 
 // register our mock database clients with the module
-registerClient({
-  getDataDB: mockGetDataDB,
-  getProjectDB: mockGetProjectDB,
-  shouldDisplayRecord: mockShouldDisplayRecord,
-  getLocalStateDB: mockGetLocalStateDB,
-});
-
-async function cleanDataDBS() {
-  let db: PouchDB.Database;
-  for (const name in databaseList) {
-    db = databaseList[name];
-    delete databaseList[name];
-
-    if (db !== undefined) {
-      try {
-        await db.destroy();
-        //await db.close();
-      } catch (err) {
-        console.error(err);
-      }
-    }
-  }
-}
+registerClient(callbackObject);
 
 beforeEach(async () => {
   return await cleanDataDBS();
@@ -131,6 +85,7 @@ describe('test internals', () => {
         });
     });
   });
+
   test('test getRecord - undefined', () => {
     expect(() => getRecord('test', 'unknownId')).rejects.toThrow(
       /no such record/
