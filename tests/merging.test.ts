@@ -20,16 +20,16 @@
 
 import PouchDB from 'pouchdb';
 
-import {ProjectID} from '../datamodel/core';
-import {Record} from '../datamodel/ui';
+import {ProjectID} from '../src/datamodel/core';
+import {Record} from '../src/datamodel/ui';
 import {
   generateFAIMSDataID,
   upsertFAIMSData,
   setRecordAsDeleted,
-} from './index';
-import {getRecord, getRevision} from './internals';
-import {mergeHeads} from './merging';
-import {registerClient} from '..';
+} from '../src/data_storage/index';
+import {getRecord, getRevision} from '../src/data_storage/internals';
+import {mergeHeads} from '../src/data_storage/merging';
+import {registerClient} from '../src';
 
 PouchDB.plugin(require('pouchdb-adapter-memory')); // enable memory adapter for testing
 
