@@ -7,6 +7,7 @@
     "build/"
   ],
   "scripts": {
+    "prepare": "npm run build",
     "build": "tsc -p tsconfig.json",
     "test": "NODE_ENV=test jest",
     "coverage": "NODE_ENV=test jest --coverage --watchAll=false"
@@ -17,12 +18,14 @@
     "type": "git",
     "url": "https://github.com/FAIMS/faims3-data-model"
   },
+  "peerDependencies": {
+    "pouchdb": "^8.0.1"
+  },
   "dependencies": {
     "@demvsystems/yup-ast": "^1.2.2",
     "@types/pouchdb": "^6.4.0",
     "fast-json-stable-stringify": "^2.1.0",
     "lodash": "^4.17.21",
-    "pouchdb": "^8.0.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
