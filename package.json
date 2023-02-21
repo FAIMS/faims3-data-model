@@ -19,7 +19,7 @@
     "url": "https://github.com/FAIMS/faims3-data-model"
   },
   "peerDependencies": {
-    "pouchdb": "^8.0.1"
+    "pouchdb": "^7.3.0"
   },
   "dependencies": {
     "@demvsystems/yup-ast": "^1.2.2",
