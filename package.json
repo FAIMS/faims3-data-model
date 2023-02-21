@@ -2,7 +2,10 @@
   "name": "faims3-datamodel",
   "version": "1.0.0",
   "description": "Database access layer for FAIMS3",
-  "module": "build/src/index.js",
+  "exports": {
+    ".": "./build/src/index.js",
+    "./types": "./build/src/types.js"
+  },
   "types": "build/src/index.d.ts",
   "files": [
     "build/"
