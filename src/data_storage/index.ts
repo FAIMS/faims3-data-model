@@ -28,15 +28,19 @@
 import {v4 as uuidv4} from 'uuid';
 
 import {getDataDB} from '../index';
+import {DEFAULT_RELATION_LINK_VOCABULARY} from '../datamodel/core';
 import {
-  RecordID,
-  ProjectID,
-  RevisionID,
   FAIMSTypeName,
-  DEFAULT_RELATION_LINK_VOCABULARY,
-} from '../datamodel/core';
-import {Revision} from '../datamodel/database';
-import {Record, RecordMetadata, RecordReference} from '../datamodel/ui';
+  ProjectID,
+  Record,
+  RecordID,
+  RecordMetadata,
+  RecordReference,
+  Revision,
+  RevisionID,
+  ProjectRevisionListing,
+  RecordRevisionListing,
+} from '../types';
 import {shouldDisplayRecord} from '../index';
 import {
   addNewRevisionFromForm,
@@ -51,16 +55,6 @@ import {
 } from './internals';
 import {getAllRecordsOfType, getAllRecordsWithRegex} from './queries';
 import {logError} from '../logging';
-
-/**
- * Project Revision Listing
- * @interface
- */
-export interface ProjectRevisionListing {
-  [_id: string]: string[];
-}
-
-export type RecordRevisionListing = RevisionID[];
 
 export function generateFAIMSDataID(): RecordID {
   return 'rec-' + uuidv4();

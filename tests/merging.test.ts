@@ -18,7 +18,7 @@
  *   TODO
  */
 
-import {Record} from '../src/datamodel/ui';
+import {Record} from '../src/types';
 import {
   generateFAIMSDataID,
   upsertFAIMSData,

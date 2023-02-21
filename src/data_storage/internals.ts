@@ -21,26 +21,25 @@
 import {v4 as uuidv4} from 'uuid';
 
 import {getDataDB} from '../index';
-import {
-  AttributeValuePairID,
-  RecordID,
-  ProjectID,
-  RevisionID,
-  FAIMSTypeName,
-  Annotations,
-  HRID_STRING,
-} from '../datamodel/core';
+import {HRID_STRING} from '../datamodel/core';
 import {
   AttributeValuePair,
   AttributeValuePairMap,
   AttributeValuePairIDMap,
   EncodedRecord,
   FAIMSAttachment,
+  Record,
   RecordMap,
   Revision,
   RevisionMap,
-} from '../datamodel/database';
-import {Record, RecordMetadataList} from '../datamodel/ui';
+  Annotations,
+  AttributeValuePairID,
+  FAIMSTypeName,
+  ProjectID,
+  RecordID,
+  RecordMetadataList,
+  RevisionID,
+} from '../types';
 import {
   getAttachmentLoaderForType,
   getAttachmentDumperForType,
@@ -347,7 +346,7 @@ export async function getRecords(
   });
   const rows = res.rows;
   const mapping: RecordMap = {};
-  rows.forEach((e: any)  => {
+  rows.forEach((e: any) => {
     if (e.doc !== undefined) {
       const doc = e.doc as EncodedRecord;
       mapping[doc._id] = doc;

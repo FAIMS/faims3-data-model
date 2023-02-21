@@ -1,7 +1,7 @@
 import PouchDB from 'pouchdb';
-import {DBCallbackObject, registerClient} from '../src';
+import {DBCallbackObject} from '../src';
 
-import {ProjectID} from '../src/datamodel/core';
+import {ProjectID} from '../src/types';
 
 PouchDB.plugin(require('pouchdb-adapter-memory')); // enable memory adapter for testing
 

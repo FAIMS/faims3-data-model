@@ -21,27 +21,17 @@
  *   databases should go in the database file.
  */
 
-/** Core types/interfaces that are used throughout the codebase.
- * @module datamodel/core
- * @category Data Model
- */
+import {
+  FullyResolvedRecordID,
+  ListingID,
+  NonUniqueProjectID,
+  ProjectID,
+  SplitRecordID,
+} from '../types';
 
-// import type {KeyLike} from 'jose';
-type KeyLike = string; // this is the same type but might not be enough for import
+export const HRID_STRING = 'hrid';
 
-// There are two internal IDs for projects, the former is unique to the system
-// (i.e. includes the listing_id), the latter is unique only to the 'projects'
-// database it came from, for a FAIMS listing
-// (It is this way because the list of projects is decentralised and so we
-// cannot enforce system-wide unique project IDs without a 'namespace' listing id)
-
-/** Projects are identified by a string unique to the whole system */
-export type ProjectID = string;
-/** Non Unique project identifier is unique only to the database it comes from, may clash with
- * other identifiers in other databases */
-export type NonUniqueProjectID = string;
-/** Listing identifier */
-export type ListingID = string;
+export const DEFAULT_RELATION_LINK_VOCABULARY = 'is related to';
 
 export function resolve_project_id(
   listing_id: ListingID,
@@ -69,19 +59,6 @@ export function split_full_project_id(full_proj_id: ProjectID): {
     listing_id: cleaned_listing_id,
     project_id: cleaned_project_id,
   };
-}
-
-// There are two internal ID for records, the former is unique to a
-// project, the latter unique to the system (i.e. includes project_id)
-
-/** Record identifier unique to the project */
-export type RecordID = string;
-/** Record identifier unique to the system, includes the project identifier */
-export type FullyResolvedRecordID = string;
-/** A representation of a {FullyResolvedRecordID} split into the component parts */
-export interface SplitRecordID {
-  project_id: ProjectID;
-  record_id: RecordID;
 }
 
 /**
@@ -112,63 +89,4 @@ export function split_full_record_id(
     project_id: cleaned_project_id,
     record_id: splitId[1],
   };
-}
-
-export type RevisionID = string;
-export type AttributeValuePairID = string;
-export type FAIMSAttachmentID = string;
-
-export type FAIMSTypeName = string;
-
-// This should be locked down more
-export type Annotations = any;
-
-export const HRID_STRING = 'hrid';
-
-export const DEFAULT_RELATION_LINK_VOCABULARY = 'is related to';
-
-export interface TokenInfo {
-  token: string;
-  pubkey: KeyLike;
-}
-
-export interface TokenContents {
-  username: string;
-  roles: string[];
-  name?: string;
-}
-
-export type ProjectRole = string;
-
-export interface ClusterProjectRoles {
-  [key: string]: Array<ProjectRole>;
-}
-
-export interface SyncStatusCallbacks {
-  sync_up: () => void;
-  sync_down: () => void;
-  sync_error: () => void;
-  sync_denied: () => void;
-}
-
-export type LocationState = {
-  parent_record_id?: string; // parent or linked record id, set from parent or linked record
-  field_id?: string; // parent or linked field id, set from parent or linked record
-  type?: string; // type of relationship: Child or Linked
-  parent_link?: string; // link of parent/linked record, so when child/link record saved, this is the redirect link
-  parent?: any; // parent to save upper level information for nest related, for example, grandparent
-  record_id?: RecordID; // child/linked record ID, set in child/linked record, should be pass back to parent
-  hrid?: string; // child/linked record HRID, this is the value displayed in field, set in child/linked record, should be pass back to parent
-  relation_type_vocabPair?: string[] | null; //pass the parent information to child
-  child_record_id?: RecordID; //child/linked record ID created from parent
-  parent_hrid?: string;
-};
-export interface LinkedRelation {
-  record_id: RecordID;
-  field_id: string;
-  relation_type_vocabPair: string[];
-}
-export interface Relationship {
-  parent?: LinkedRelation; // has single parent
-  linked?: Array<LinkedRelation>; // has multiple link
 }

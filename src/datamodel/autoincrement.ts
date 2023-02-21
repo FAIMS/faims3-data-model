@@ -24,22 +24,16 @@
 // (It is this way because the list of projects is decentralised and so we
 // cannot enforce system-wide unique project IDs without a 'namespace' listing id)
 import {getProjectDB, getLocalStateDB} from '../index';
-import {ProjectID} from './core';
 import {
-  LOCAL_AUTOINCREMENT_PREFIX,
-  LOCAL_AUTOINCREMENT_NAME,
+  ProjectID,
+  UserFriendlyAutoincrementStatus,
   LocalAutoIncrementRange,
   LocalAutoIncrementState,
   AutoIncrementReference,
   AutoIncrementReferenceDoc,
-} from './database';
+} from '../types';
+import {LOCAL_AUTOINCREMENT_PREFIX, LOCAL_AUTOINCREMENT_NAME} from './database';
 import {logError} from '../logging';
-
-export interface UserFriendlyAutoincrementStatus {
-  label: string;
-  last_used: number | null;
-  end: number | null;
-}
 
 function get_pouch_id(
   project_id: ProjectID,

@@ -18,9 +18,50 @@
  *   Main entry point for the module.
  */
 
-import {ProjectID} from './datamodel/core';
-import {RecordMetadata} from './datamodel/ui';
+import {
+  add_autoincrement_reference_for_project,
+  get_autoincrement_references_for_project,
+} from './datamodel/autoincrement';
+import {HRID_STRING, split_full_project_id} from './datamodel/core';
+import {
+  get_fieldpersistentdata,
+  set_fieldpersistentdata,
+} from './datamodel/fieldpersistent';
+import {isEqualFAIMS} from './datamodel/typesystem';
+import {ProjectID, RecordMetadata} from './types';
+import {
+  generateFAIMSDataID,
+  getFirstRecordHead,
+  getFullRecordData,
+  getHRIDforRecordID,
+  getRecordMetadata,
+  getRecordsByType,
+  listFAIMSRecordRevisions,
+  setRecordAsDeleted,
+  upsertFAIMSData,
+} from './data_storage';
+import {getAllRecordsWithRegex} from './data_storage/queries';
 import {logError} from './logging';
+
+export {
+  HRID_STRING,
+  add_autoincrement_reference_for_project,
+  generateFAIMSDataID,
+  getAllRecordsWithRegex,
+  getFirstRecordHead,
+  getFullRecordData,
+  getHRIDforRecordID,
+  getRecordMetadata,
+  getRecordsByType,
+  get_autoincrement_references_for_project,
+  get_fieldpersistentdata,
+  isEqualFAIMS,
+  listFAIMSRecordRevisions,
+  setRecordAsDeleted,
+  set_fieldpersistentdata,
+  split_full_project_id,
+  upsertFAIMSData,
+};
 
 export type DBCallbackObject = {
   getDataDB: CallableFunction;

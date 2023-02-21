@@ -22,15 +22,10 @@
 import {registerClient} from '../src';
 
 import {HRID_STRING} from '../src/datamodel/core';
-import {Record} from '../src/datamodel/ui';
+import {Record} from '../src/types';
 import {generateFAIMSDataID, upsertFAIMSData} from '../src/data_storage/index';
 
-import {
-  getHRID,
-  getLatestRevision,
-  getRecord,
-  getRevision,
-} from '../src/data_storage/internals';
+import {getHRID, getRecord, getRevision} from '../src/data_storage/internals';
 import {callbackObject, cleanDataDBS} from './mocks';
 
 // register our mock database clients with the module

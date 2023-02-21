@@ -19,54 +19,9 @@
  */
 import {isEqual} from 'lodash';
 import {logError} from '../logging';
+import {AttributeValuePair, FAIMSAttachment} from '../types';
 
-import {FAIMSTypeName} from './core';
-import {AttributeValuePair, FAIMSAttachment} from './database';
-
-export interface FAIMSType {
-  [key: string]: any; // any for now until we lock down the json
-}
-
-export interface FAIMSTypeCollection {
-  [key: string]: FAIMSType;
-}
-
-export interface FAIMSConstant {
-  [key: string]: any; // any for now until we lock down the json
-}
-
-export interface FAIMSConstantCollection {
-  [key: string]: FAIMSConstant;
-}
-
-export interface ProjectUIFields {
-  [key: string]: any;
-}
-
-export interface ProjectUIViewsets {
-  [type: string]: {
-    label?: string;
-    views: string[];
-    submit_label?: string;
-    is_visible?: boolean;
-  };
-}
-
-export interface ProjectUIViews {
-  [key: string]: {
-    label?: string;
-    fields: string[];
-    uidesign?: string;
-    next_label?: string;
-    is_logic?: {[key: string]: string[]}; //add for branching logic
-  };
-}
-
-export interface option {
-  value: string;
-  label: string;
-  key?: string;
-}
+import {FAIMSTypeName} from '../types';
 
 type AttributeValuePairDumper = (
   avp: AttributeValuePair

@@ -18,9 +18,15 @@
  *   Functions to query specific information from pouchdb
  */
 import {getDataDB} from '../index';
-import {ProjectID, FAIMSTypeName, RecordID} from '../datamodel/core';
-import {AttributeValuePair} from '../datamodel/database';
-import {RecordReference, RecordMetadataList} from '../datamodel/ui';
+import {
+  ProjectID,
+  FAIMSTypeName,
+  RecordReference,
+  RecordMetadataList,
+  AttributeValuePair,
+  RecordID,
+} from '../types';
+
 import {listRecordMetadata} from './internals';
 
 export async function getAllRecordsOfType(

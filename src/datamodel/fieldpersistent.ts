@@ -23,9 +23,8 @@
  */
 
 import {getLocalStateDB} from '../index';
-import {ProjectID} from './core';
+import {ProjectID, fieldpersistentdata} from '../types';
 import {LOCAL_FIELDpersistent_PREFIX} from './database';
-import {fieldpersistentdata} from './ui';
 import stable_stringify from 'fast-json-stable-stringify';
 import {logError} from '../logging';
 

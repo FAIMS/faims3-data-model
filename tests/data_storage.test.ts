@@ -20,7 +20,7 @@
 
 import {test, fc} from '@fast-check/jest';
 import {registerClient} from '../src';
-import {Record} from '../src/datamodel/ui';
+import {Record} from '../src/types';
 import {
   deleteFAIMSDataForID,
   generateFAIMSDataID,

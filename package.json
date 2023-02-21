@@ -4,12 +4,18 @@
   "description": "Database access layer for FAIMS3",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
     "test": "NODE_ENV=test jest",
     "coverage": "NODE_ENV=test jest --coverage --watchAll=false"
   },
   "author": "",
-  "license": "ISC",
+  "license": "Apache",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FAIMS/faims3-data-model"
+  },
   "dependencies": {
+    "@demvsystems/yup-ast": "^1.2.2",
     "@types/pouchdb": "^6.4.0",
     "fast-json-stable-stringify": "^2.1.0",
     "lodash": "^4.17.21",

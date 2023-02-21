@@ -22,3 +22,12 @@
   is an instance of Blob.  Blob isn't there in node by default so we will need
   a better test that will work on both browser and node.  Initially just having
   that fn return false to get the tests to run 
+
+* the exported interface 'option' could do with a better name!
+
+* data_storage/validation.ts is about form validation and relies on getting the
+ uiSpec for a notebook via modules not included here.  Remove it from here for
+ now but consider pulling all of the metadata manipulation code into here at some
+ later time
+
+ 

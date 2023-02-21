@@ -21,19 +21,19 @@
  */
 
 import {getDataDB} from '../index';
-import {
-  FAIMSTypeName,
-  RecordID,
-  ProjectID,
-  RevisionID,
-  LinkedRelation,
-} from '../datamodel/core';
+
 import {
   AttributeValuePairIDMap,
+  FAIMSTypeName,
+  LinkedRelation,
+  ProjectID,
+  RecordID,
+  RecordMergeInformation,
   Revision,
+  RevisionID,
   RevisionMap,
-} from '../datamodel/database';
-import {RecordMergeInformation, UserMergeResult} from '../datamodel/ui';
+  UserMergeResult,
+} from '../types';
 import {
   generateFAIMSRevisionID,
   generateFAIMSAttributeValuePairID,

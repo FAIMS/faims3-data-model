@@ -20,12 +20,12 @@
 import PouchDB from 'pouchdb';
 import {v4 as uuidv4} from 'uuid';
 
-import {FAIMSAttachmentID} from '../datamodel/core';
 import {
+  FAIMSAttachmentID,
   AttributeValuePair,
   FAIMSAttachment,
   FAIMSAttachmentReference,
-} from '../datamodel/database';
+} from '../types';
 
 interface FullAttachments {
   [attachmentId: string]: PouchDB.Core.FullAttachment;
