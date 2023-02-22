@@ -30,4 +30,15 @@
  now but consider pulling all of the metadata manipulation code into here at some
  later time
 
+* to get a list of records we have getRecordsWithRegex (data_storage/index.ts) 
+ and getAllRecordsWithRegex (data_storage/queries.ts).   getRecords calls getAllRecords
+ and then calls filterRecordMetadata to optionally remove deleted records and those
+ that shouldn't be visible to the user (shouldDisplayRecord).   Both are 
+ used in FAIMS but surely only getRecordsWithRegex should be used because we
+ always want to remove hidden records...actually the use of getAll is in my
+ code to navigate via QR code so is not correct.  getAll should not be
+ exported here and that QR code (in gui/components/notebook/add_record_by_type.tsx)
+ should be modified.
+
  
+
