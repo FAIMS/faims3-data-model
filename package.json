@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "Database access layer for FAIMS3",
   "exports": {
-    ".": "./build/src/index.js",
-    "./types": "./build/src/types.js"
+    ".": "./build/src/index.js"
   },
   "types": "build/src/index.d.ts",
   "files": [

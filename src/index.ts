@@ -65,6 +65,8 @@ export {
   upsertFAIMSData,
 };
 
+export * from './types';
+
 export type DBCallbackObject = {
   getDataDB: CallableFunction;
   getProjectDB: CallableFunction;
