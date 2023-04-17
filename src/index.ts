@@ -20,7 +20,11 @@
 
 import {
   add_autoincrement_reference_for_project,
+  create_new_autoincrement_range,
   get_autoincrement_references_for_project,
+  get_local_autoincrement_ranges_for_field,
+  get_user_friendly_status_for_project,
+  set_local_autoincrement_ranges_for_field,
 } from './datamodel/autoincrement';
 import {
   HRID_STRING,
@@ -31,9 +35,14 @@ import {
   get_fieldpersistentdata,
   set_fieldpersistentdata,
 } from './datamodel/fieldpersistent';
-import {isEqualFAIMS} from './datamodel/typesystem';
+import {
+  getEqualityFunctionForType,
+  isEqualFAIMS,
+  setAttachmentDumperForType,
+  setAttachmentLoaderForType,
+  setEqualityFunctionForType,
+} from './datamodel/typesystem';
 import {ProjectID, RecordMetadata} from './types';
-import {isRecord} from './datamodel/database';
 import {
   generateFAIMSDataID,
   getFirstRecordHead,
@@ -56,13 +65,20 @@ import {
 } from './data_storage/merging';
 import {getAllRecordsWithRegex} from './data_storage/queries';
 import {logError} from './logging';
-import {attachment_to_file} from './data_storage/attachments';
+import {
+  attachment_to_file,
+  attachments_to_files,
+  file_data_to_attachments,
+  files_to_attachments,
+} from './data_storage/attachments';
 
 export {
   HRID_STRING,
   attachment_to_file,
+  attachments_to_files,
   add_autoincrement_reference_for_project,
   findConflictingFields,
+  files_to_attachments,
   generateFAIMSDataID,
   getAllRecordsWithRegex,
   getFirstRecordHead,
@@ -77,7 +93,6 @@ export {
   get_fieldpersistentdata,
   getMergeInformationForHead,
   isEqualFAIMS,
-  isRecord,
   listFAIMSRecordRevisions,
   mergeHeads,
   resolve_project_id,
@@ -86,8 +101,18 @@ export {
   set_fieldpersistentdata,
   split_full_project_id,
   upsertFAIMSData,
+  setAttachmentLoaderForType,
+  setAttachmentDumperForType,
+  getEqualityFunctionForType,
+  setEqualityFunctionForType,
+  file_data_to_attachments,
+  get_local_autoincrement_ranges_for_field,
+  set_local_autoincrement_ranges_for_field,
+  create_new_autoincrement_range,
+  get_user_friendly_status_for_project,
 };
 
+export * from './datamodel/database';
 export * from './types';
 
 export type DBCallbackObject = {
