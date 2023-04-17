@@ -22,13 +22,18 @@ import {
   add_autoincrement_reference_for_project,
   get_autoincrement_references_for_project,
 } from './datamodel/autoincrement';
-import {HRID_STRING, split_full_project_id} from './datamodel/core';
+import {
+  HRID_STRING,
+  resolve_project_id,
+  split_full_project_id,
+} from './datamodel/core';
 import {
   get_fieldpersistentdata,
   set_fieldpersistentdata,
 } from './datamodel/fieldpersistent';
 import {isEqualFAIMS} from './datamodel/typesystem';
 import {ProjectID, RecordMetadata} from './types';
+import {isRecord} from './datamodel/database';
 import {
   generateFAIMSDataID,
   getFirstRecordHead,
@@ -41,24 +46,38 @@ import {
   setRecordAsDeleted,
   upsertFAIMSData,
 } from './data_storage';
+import {
+  mergeHeads,
+  findConflictingFields,
+  getInitialMergeDetails,
+  getMergeInformationForHead,
+  saveUserMergeResult,
+} from './data_storage/merging';
 import {getAllRecordsWithRegex} from './data_storage/queries';
 import {logError} from './logging';
 
 export {
   HRID_STRING,
   add_autoincrement_reference_for_project,
+  findConflictingFields,
   generateFAIMSDataID,
   getAllRecordsWithRegex,
   getFirstRecordHead,
   getFullRecordData,
   getHRIDforRecordID,
+  getInitialMergeDetails,
   getRecordMetadata,
   getRecordsByType,
   getRecordsWithRegex,
   get_autoincrement_references_for_project,
   get_fieldpersistentdata,
+  getMergeInformationForHead,
   isEqualFAIMS,
+  isRecord,
   listFAIMSRecordRevisions,
+  mergeHeads,
+  resolve_project_id,
+  saveUserMergeResult,
   setRecordAsDeleted,
   set_fieldpersistentdata,
   split_full_project_id,

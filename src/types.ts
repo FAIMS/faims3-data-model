@@ -21,7 +21,7 @@
 // from datamodel/core.ts ---------------------------------------------------
 
 // import type {KeyLike} from 'jose';
-type KeyLike = string; // this is the same type but might not be enough for import
+export type KeyLike = string; // this is the same type but might not be enough for import
 
 // There are two internal IDs for projects, the former is unique to the system
 // (i.e. includes the listing_id), the latter is unique only to the 'projects'
@@ -730,4 +730,22 @@ export type RecordRevisionListing = RevisionID[];
 
 // end of types from datamodel/index.ts --------------------------------
 
-// types from data_storage/index.ts --------------------------------
+// types from data_storage/merging.ts --------------------------------
+
+interface InitialMergeRevisionDetails {
+  created: Date;
+  created_by: string;
+  type: FAIMSTypeName;
+  deleted: boolean;
+}
+
+export type InitialMergeRevisionDetailsMap = {
+  [revision_id: string]: InitialMergeRevisionDetails;
+};
+
+export interface InitialMergeDetails {
+  available_heads: InitialMergeRevisionDetailsMap;
+  initial_head: RevisionID;
+  initial_head_data: RecordMergeInformation;
+}
+

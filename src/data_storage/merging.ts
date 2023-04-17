@@ -25,6 +25,8 @@ import {getDataDB} from '../index';
 import {
   AttributeValuePairIDMap,
   FAIMSTypeName,
+  InitialMergeDetails,
+  InitialMergeRevisionDetailsMap,
   LinkedRelation,
   ProjectID,
   RecordID,
@@ -46,23 +48,6 @@ import {
 import {logError} from '../logging';
 
 interface InitialMergeHeadDetails {
-  initial_head: RevisionID;
-  initial_head_data: RecordMergeInformation;
-}
-
-interface InitialMergeRevisionDetails {
-  created: Date;
-  created_by: string;
-  type: FAIMSTypeName;
-  deleted: boolean;
-}
-
-export type InitialMergeRevisionDetailsMap = {
-  [revision_id: string]: InitialMergeRevisionDetails;
-};
-
-export interface InitialMergeDetails {
-  available_heads: InitialMergeRevisionDetailsMap;
   initial_head: RevisionID;
   initial_head_data: RecordMergeInformation;
 }
@@ -220,7 +205,7 @@ async function doFastForward(
   return merge_result;
 }
 
-export async function do3WayMerge(
+async function do3WayMerge(
   project_id: ProjectID,
   revision_cache: RevisionCache,
   them_id: RevisionID,
@@ -420,7 +405,7 @@ function sortRevisionsForInitialMerge(revisions: RevisionMap): RevisionMap {
   return revisions;
 }
 
-export async function getMergeInformationForRevision(
+async function getMergeInformationForRevision(
   project_id: ProjectID,
   revision: Revision
 ): Promise<RecordMergeInformation> {
