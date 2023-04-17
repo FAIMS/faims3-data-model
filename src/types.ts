@@ -59,11 +59,6 @@ export type FAIMSTypeName = string;
 // This should be locked down more
 export type Annotations = any;
 
-export interface TokenInfo {
-  token: string;
-  pubkey: KeyLike;
-}
-
 export interface TokenContents {
   username: string;
   roles: string[];

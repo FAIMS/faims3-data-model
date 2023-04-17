@@ -39,6 +39,7 @@ import {
   getFirstRecordHead,
   getFullRecordData,
   getHRIDforRecordID,
+  getMetadataForAllRecords,
   getRecordMetadata,
   getRecordsByType,
   getRecordsWithRegex,
@@ -55,9 +56,11 @@ import {
 } from './data_storage/merging';
 import {getAllRecordsWithRegex} from './data_storage/queries';
 import {logError} from './logging';
+import {attachment_to_file} from './data_storage/attachments';
 
 export {
   HRID_STRING,
+  attachment_to_file,
   add_autoincrement_reference_for_project,
   findConflictingFields,
   generateFAIMSDataID,
@@ -66,6 +69,7 @@ export {
   getFullRecordData,
   getHRIDforRecordID,
   getInitialMergeDetails,
+  getMetadataForAllRecords,
   getRecordMetadata,
   getRecordsByType,
   getRecordsWithRegex,
