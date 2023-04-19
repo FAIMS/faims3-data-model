@@ -23,11 +23,14 @@ import {
   create_new_autoincrement_range,
   get_autoincrement_references_for_project,
   get_local_autoincrement_ranges_for_field,
+  get_local_autoincrement_state_for_field,
   get_user_friendly_status_for_project,
   set_local_autoincrement_ranges_for_field,
+  set_local_autoincrement_state_for_field,
 } from './datamodel/autoincrement';
 import {
   HRID_STRING,
+  DEFAULT_RELATION_LINK_VOCABULARY,
   resolve_project_id,
   split_full_project_id,
 } from './datamodel/core';
@@ -68,6 +71,7 @@ import {logError} from './logging';
 import {
   attachment_to_file,
   attachments_to_files,
+  file_attachments_to_data,
   file_data_to_attachments,
   files_to_attachments,
 } from './data_storage/attachments';
@@ -79,6 +83,7 @@ export {
   add_autoincrement_reference_for_project,
   findConflictingFields,
   files_to_attachments,
+  file_attachments_to_data,
   generateFAIMSDataID,
   getAllRecordsWithRegex,
   getFirstRecordHead,
@@ -108,8 +113,11 @@ export {
   file_data_to_attachments,
   get_local_autoincrement_ranges_for_field,
   set_local_autoincrement_ranges_for_field,
+  get_local_autoincrement_state_for_field,
+  set_local_autoincrement_state_for_field,
   create_new_autoincrement_range,
   get_user_friendly_status_for_project,
+  DEFAULT_RELATION_LINK_VOCABULARY,
 };
 
 export * from './datamodel/database';

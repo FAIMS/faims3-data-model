@@ -491,7 +491,7 @@ export interface ProjectUIViews {
   };
 }
 
-export interface option {
+export interface ElementOption {
   value: string;
   label: string;
   key?: string;
