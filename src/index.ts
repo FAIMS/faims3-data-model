@@ -19,25 +19,11 @@
  */
 
 import {
-  add_autoincrement_reference_for_project,
-  create_new_autoincrement_range,
-  get_autoincrement_references_for_project,
-  get_local_autoincrement_ranges_for_field,
-  get_local_autoincrement_state_for_field,
-  get_user_friendly_status_for_project,
-  set_local_autoincrement_ranges_for_field,
-  set_local_autoincrement_state_for_field,
-} from './datamodel/autoincrement';
-import {
   HRID_STRING,
   DEFAULT_RELATION_LINK_VOCABULARY,
   resolve_project_id,
   split_full_project_id,
 } from './datamodel/core';
-import {
-  get_fieldpersistentdata,
-  set_fieldpersistentdata,
-} from './datamodel/fieldpersistent';
 import {
   getEqualityFunctionForType,
   isEqualFAIMS,
@@ -80,7 +66,6 @@ export {
   HRID_STRING,
   attachment_to_file,
   attachments_to_files,
-  add_autoincrement_reference_for_project,
   findConflictingFields,
   files_to_attachments,
   file_attachments_to_data,
@@ -94,16 +79,13 @@ export {
   getRecordMetadata,
   getRecordsByType,
   getRecordsWithRegex,
-  get_autoincrement_references_for_project,
-  get_fieldpersistentdata,
   getMergeInformationForHead,
   isEqualFAIMS,
   listFAIMSRecordRevisions,
   mergeHeads,
   resolve_project_id,
   saveUserMergeResult,
-  setRecordAsDeleted,
-  set_fieldpersistentdata,
+  setRecordAsDeleted, 
   split_full_project_id,
   upsertFAIMSData,
   setAttachmentLoaderForType,
@@ -111,12 +93,6 @@ export {
   getEqualityFunctionForType,
   setEqualityFunctionForType,
   file_data_to_attachments,
-  get_local_autoincrement_ranges_for_field,
-  set_local_autoincrement_ranges_for_field,
-  get_local_autoincrement_state_for_field,
-  set_local_autoincrement_state_for_field,
-  create_new_autoincrement_range,
-  get_user_friendly_status_for_project,
   DEFAULT_RELATION_LINK_VOCABULARY,
 };
 
@@ -127,7 +103,6 @@ export type DBCallbackObject = {
   getDataDB: CallableFunction;
   getProjectDB: CallableFunction;
   shouldDisplayRecord: CallableFunction;
-  getLocalStateDB: CallableFunction;
 };
 
 let moduleCallback: DBCallbackObject;
@@ -162,15 +137,6 @@ export const shouldDisplayRecord = (
     return moduleCallback.shouldDisplayRecord(project_id, record_metadata);
   } else {
     logError('No callback registered to check record permissions');
-    return undefined;
-  }
-};
-
-export const getLocalStateDB = () => {
-  if (moduleCallback) {
-    return moduleCallback.getLocalStateDB();
-  } else {
-    logError('No callback registered to get local state DB');
     return undefined;
   }
 };

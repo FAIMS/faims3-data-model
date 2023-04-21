@@ -24,10 +24,7 @@ export const UI_SPECIFICATION_NAME = 'ui-specification';
 export const PROJECT_SPECIFICATION_PREFIX = 'project-specification';
 export const PROJECT_METADATA_PREFIX = 'project-metadata';
 export const RECORD_INDEX_NAME = 'record-version-index';
-export const LOCAL_AUTOINCREMENT_PREFIX = 'local-autoincrement-state';
-export const LOCAL_AUTOINCREMENT_NAME = 'local-autoincrementers';
 export const LOCALLY_CREATED_PROJECT_PREFIX = 'locallycreatedproject';
-export const LOCAL_FIELDpersistent_PREFIX = 'local-fieldpersistent-state';
 
 export function isRecord(doc: ProjectDataObject): doc is EncodedRecord {
   return (<EncodedRecord>doc).record_format_version !== undefined;

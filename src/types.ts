@@ -102,14 +102,6 @@ export interface Relationship {
 
 // end of types from datamodel/core.ts -----------------------------------------
 
-// types from datamodel/autoincrement.ts ----------------------------------------
-export interface UserFriendlyAutoincrementStatus {
-  label: string;
-  last_used: number | null;
-  end: number | null;
-}
-
-// end of types from datamodel/autoincrement.ts --------------------------------
 
 // types from datamodel/database.ts ----------------------------------------
 
@@ -696,18 +688,6 @@ export type resetprops = {
 };
 
 export type SectionMeta = any;
-
-//interface for field persistent state
-export interface fieldpersistentdata {
-  _id?: string;
-  project_id?: ProjectID;
-  type: FAIMSTypeName;
-  data: {[field_name: string]: any};
-  updated?: Date;
-  field_types?: {[field_name: string]: FAIMSTypeName};
-  annotations: {[field_name: string]: Annotations};
-  created?: Date;
-}
 
 // end of types from datamodel/ui.ts --------------------------------
 

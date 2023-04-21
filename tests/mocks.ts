@@ -24,10 +24,6 @@ const mockGetProjectDB = async (project_id: ProjectID) => {
   return getDatabase('project-' + project_id);
 };
 
-const mockGetLocalStateDB = async () => {
-  return getDatabase('local-state');
-};
-
 const mockShouldDisplayRecord = () => {
   return true;
 };
@@ -52,6 +48,5 @@ export const cleanDataDBS = async () => {
 export const callbackObject: DBCallbackObject = {
   getDataDB: mockGetDataDB,
   getProjectDB: mockGetProjectDB,
-  shouldDisplayRecord: mockShouldDisplayRecord,
-  getLocalStateDB: mockGetLocalStateDB,
+  shouldDisplayRecord: mockShouldDisplayRecord
 };
