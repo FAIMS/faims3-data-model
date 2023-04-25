@@ -84,12 +84,11 @@ export function setAttachmentDumperForType(
 // TODO: testing under node I get the error that Blob is not defined
 //    so might need to modify this test to have it work on both
 //    browser and node environments
+//  use duck typing instead, blobs have 'size' and 'type' properties
 function isAttachment(a: any): boolean {
-  return false;
-  // if (a instanceof Blob) {
-  //   return true;
-  // }
-  // return false;
+  if ('size' in a && 'type' in a) {
+    return true;
+  }
 }
 
 /*
@@ -117,7 +116,7 @@ export async function isEqualFAIMS(a: any, b: any): Promise<boolean> {
     return true;
   } else if (isAttachment(a) && isAttachment(b)) {
     // console.debug('Checking equality of blobs', a, b);
-    if (a.size !== b.size || a.type !== b.type || a.name !== b.name) {
+    if (a.size !== b.size || a.type !== b.type) {
       return false;
     }
     // console.debug('Checking equality of blob contents', a, b);
