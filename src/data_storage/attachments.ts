@@ -52,7 +52,7 @@ export function file_data_to_attachments(
   const docs_to_dump: Array<AttributeValuePair | FAIMSAttachment> = [];
   const attach_refs: FAIMSAttachmentReference[] = [];
   for (const tmp_file of avp.data) {
-    const file = tmp_file as File;
+    const file = tmp_file; // as File;
     const file_name = file.name ?? generate_file_name();
     const attach_id = generateFAIMSAttachmentID();
     const attach_doc: FAIMSAttachment = {
@@ -66,10 +66,24 @@ export function file_data_to_attachments(
       filename: file_name,
       _attachments: {},
     };
-    attach_doc._attachments![attach_id] = {
-      content_type: file.type,
-      data: file,
-    };
+    // in the browser, `file` will be a File and can 
+    // be passed as the data attribute
+    // in Node, `file` will be a structure {type, data}
+    // where `data` is a Buffer that we can pass in
+    if (file.data) {
+      attach_doc._attachments![attach_id] = {
+        content_type: file.type,
+        data: file.data,
+      };
+    } else {
+      attach_doc._attachments![attach_id] = {
+        content_type: file.type,
+        data: file,
+      };
+    }
+
+
+    console.log('attach_doc', attach_doc);
     attach_refs.push({
       attachment_id: attach_id,
       filename: file_name,
@@ -77,9 +91,9 @@ export function file_data_to_attachments(
     });
     docs_to_dump.push(attach_doc);
   }
-  console.debug('Encoded attachments in avp', avp);
   avp.data = null;
   avp.faims_attachments = attach_refs;
+  console.debug('Encoded attachments in avp', avp);
   docs_to_dump.push(avp);
   return docs_to_dump;
 }
