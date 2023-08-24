@@ -205,7 +205,6 @@ export async function getHRID(
     }
   }
 
-  console.debug('hrid_name:', hrid_name);
   if (hrid_name === null) {
     console.warn('No HRID field found');
     return null;
@@ -215,10 +214,8 @@ export async function getHRID(
     console.warn('No HRID field set for revision');
     return null;
   }
-  console.debug('hrid_avp_id:', hrid_avp_id);
   try {
     const hrid_avp = await getAttributeValuePair(project_id, hrid_avp_id);
-    console.debug('hrid_avp:', hrid_avp);
     return hrid_avp.data as string;
   } catch (err) {
     console.warn('Failed to load HRID AVP:', project_id, hrid_avp_id);

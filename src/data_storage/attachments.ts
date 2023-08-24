@@ -44,10 +44,8 @@ export function file_data_to_attachments(
   avp: AttributeValuePair
 ): Array<AttributeValuePair | FAIMSAttachment> {
   if (avp.data === null) {
-    console.debug('No data in', avp);
     return [avp];
   }
-  console.debug('Attachments in avp', avp);
 
   const docs_to_dump: Array<AttributeValuePair | FAIMSAttachment> = [];
   const attach_refs: FAIMSAttachmentReference[] = [];
@@ -82,8 +80,6 @@ export function file_data_to_attachments(
       };
     }
 
-
-    console.log('attach_doc', attach_doc);
     attach_refs.push({
       attachment_id: attach_id,
       filename: file_name,
@@ -93,7 +89,6 @@ export function file_data_to_attachments(
   }
   avp.data = null;
   avp.faims_attachments = attach_refs;
-  console.debug('Encoded attachments in avp', avp);
   docs_to_dump.push(avp);
   return docs_to_dump;
 }
@@ -107,7 +102,6 @@ export function files_to_attachments(files: File[]): FullAttachments {
       data: file,
     };
   }
-  console.debug('Converted files to attachments', files, attachments);
   return attachments;
 }
 
@@ -115,10 +109,8 @@ export function attachment_to_file(
   name: string,
   attachment: PouchDB.Core.Attachment
 ): File {
-  console.debug('attachment?', attachment);
   const content_type = attachment.content_type;
   const data = (attachment as PouchDB.Core.FullAttachment).data;
-  console.debug('blob?', data);
   return new File([data], name, {type: content_type});
 }
 
@@ -129,7 +121,6 @@ export function attachments_to_files(
   for (const [name, attach] of Object.entries(attachments)) {
     attach_list.push(attachment_to_file(name, attach));
   }
-  console.debug('Converted attachments to files', attachments, attach_list);
   return attach_list;
 }
 
@@ -154,7 +145,6 @@ export function file_attachments_to_data(
       attach_list.push(possible_file);
     }
   }
-  console.debug('files?', attach_list);
   avp.data = attach_list;
   return avp;
 }
