@@ -86,7 +86,7 @@ export function setAttachmentDumperForType(
 //    browser and node environments
 //  use duck typing instead, blobs have 'size' and 'type' properties
 function isAttachment(a: any): boolean {
-  return 'size' in a && 'type' in a;
+  return a.size !== undefined && a.type !== undefined;
 }
 
 /*
