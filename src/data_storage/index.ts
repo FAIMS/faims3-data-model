@@ -374,7 +374,6 @@ export async function getRecordsByType(
     await listRecordMetadata(project_id).then(record_list => {
       for (const key in record_list) {
         const metadata = record_list[key];
-        console.debug('Records', key, metadata);
 
         let is_parent = false;
         const relationship = metadata['relationship'];
@@ -396,14 +395,6 @@ export async function getRecordsByType(
           )
             is_parent = true;
         }
-        console.debug(
-          'relationship',
-          metadata,
-          relationship,
-          record_id,
-          field_id,
-          is_parent
-        );
         if (!metadata.deleted && metadata.type === type && !is_parent) {
           const hrid =
             metadata.hrid !== '' && metadata.hrid !== undefined
@@ -422,7 +413,6 @@ export async function getRecordsByType(
               record_label: hrid,
               relation_type_vocabPair: relation_vocab, // pass the value of the vocab
             });
-          console.debug('Not deleted Records', key, metadata);
         }
       }
     });
@@ -441,17 +431,14 @@ async function filterRecordMetadata(
   filter_deleted: boolean
 ): Promise<RecordMetadata[]> {
   const new_record_list: RecordMetadata[] = [];
-  for (const metadata of record_list) {
-    console.debug('Records', metadata);
+  for (const metadata of record_list) { 
     if (
       !(metadata.deleted && filter_deleted) &&
       (await shouldDisplayRecord(project_id, metadata))
     ) {
       new_record_list.push(metadata);
-      console.debug('Not deleted Records', metadata);
     }
   }
-  console.debug('Reduced record list', new_record_list);
   return new_record_list;
 }
 
