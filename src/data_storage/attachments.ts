@@ -32,7 +32,6 @@ interface FullAttachments {
 }
 
 export function generate_file_name(): string {
-  console.debug('Generating a uuid-filename');
   return 'file-' + uuidv4();
 }
 
