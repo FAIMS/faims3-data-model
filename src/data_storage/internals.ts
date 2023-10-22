@@ -206,7 +206,6 @@ export async function getHRID(
   }
 
   if (hrid_name === null) {
-    console.warn('No HRID field found');
     return null;
   }
   const hrid_avp_id = revision.avps[hrid_name];
@@ -252,19 +251,12 @@ export async function listRecordMetadata(
       const revision = revisions[revision_id];
       if (revision === undefined) {
         // We don't have that revision, so skip
-        console.warn(
-          'Unable to find revision',
-          project_id,
-          record_id,
-          revision_id
-        );
         continue;
       }
       const hrid =
         revision === undefined
           ? record_id
           : (await getHRID(project_id, revision)) ?? record_id;
-      console.debug('hrid:', hrid);
 
       out[record_id] = {
         project_id: project_id,
@@ -281,10 +273,8 @@ export async function listRecordMetadata(
         relationship: revision.relationship,
       };
     }
-    console.debug('Record metadata list', out);
     return out;
   } catch (err) {
-    console.warn('Failed to get metadata', err);
     throw Error('failed to get metadata');
   }
 }
@@ -469,11 +459,6 @@ async function addNewAttributeValuePairs(
       docs_to_dump.push(...dumpAttributeValuePair(new_avp));
       avp_map[field_name] = new_avp_id;
     } else {
-      console.debug(
-        'Using existing AVP, the following are equal',
-        stored_data,
-        field_value
-      );
       if (revision.avps !== undefined) {
         avp_map[field_name] = revision.avps[field_name];
       } else {

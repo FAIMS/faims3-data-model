@@ -121,6 +121,80 @@ describe('round-trip reading and writing to db', () => {
   );
 });
 
+test('updating an existing record with extended data', async () => {
+  try {
+    await cleanDataDBS();
+  } catch (err) {
+    fail('Failed to clean dbs');
+  }
+
+  const project_id = 'test';
+  const record_id = generateFAIMSDataID();
+  const fullType = 'test::test';
+  const data = {
+    name: 'Bob Bobalooba',
+    age: 42,
+  };
+  const fieldTypes = {
+    name: 'faims::string',
+    age: 'faims::integer',
+  };
+  const new_data = {
+    name: 'Bob Bobalooba',
+    age: 54,
+    occupation: 'Software Engineer',
+  };
+  const new_field_types = {
+    name: 'faims::string',
+    age: 'faims::integer',
+    occupation: 'faims::string',
+  };
+  const userID = 'user';
+  const time = new Date();
+
+  const doc: Record = {
+    project_id: project_id,
+    record_id: record_id,
+    revision_id: null,
+    type: fullType,
+    data: data,
+    created_by: userID,
+    updated_by: userID,
+    created: time,
+    updated: time,
+    annotations: {},
+    field_types: fieldTypes,
+    relationship: undefined,
+    deleted: false,
+  };
+
+  return upsertFAIMSData(project_id, doc)
+    .then(revision_id => {
+      return getFullRecordData(project_id, record_id, revision_id);
+    })
+    .then(result => {
+      if (result) {
+        expect(result.data).toEqual(data);
+        // now we change the data and update
+        result.data = new_data;
+        result.field_types = new_field_types;
+        return upsertFAIMSData(project_id, result)
+          .then(new_revision_id => {
+            return getFullRecordData(project_id, record_id, new_revision_id);
+          })
+          .then(result => {
+            if (result) {
+              expect(result.data).toEqual(new_data);
+            } else {
+              fail('Failed to get record');
+            }
+          });
+      } else {
+        fail('Failed to get record');
+      }
+    });
+});
+
 describe('CRUD for data', () => {
   test.prop([
     fc.fullUnicodeString(), // project_id

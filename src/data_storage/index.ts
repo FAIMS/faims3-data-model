@@ -89,11 +89,11 @@ export async function upsertFAIMSData(
   }
   const revision_id = generateFAIMSRevisionID();
   if (record.revision_id === null) {
-    //console.info('New record', record);
+    // console.info('New record', record);
     await createNewRecord(project_id, record, revision_id);
     await addNewRevisionFromForm(project_id, record, revision_id);
   } else {
-    //console.info('Update existing record', record);
+    // console.info('Update existing record', record);
     await addNewRevisionFromForm(project_id, record, revision_id);
     await updateHeads(
       project_id,
@@ -431,7 +431,7 @@ async function filterRecordMetadata(
   filter_deleted: boolean
 ): Promise<RecordMetadata[]> {
   const new_record_list: RecordMetadata[] = [];
-  for (const metadata of record_list) { 
+  for (const metadata of record_list) {
     if (
       !(metadata.deleted && filter_deleted) &&
       (await shouldDisplayRecord(project_id, metadata))
