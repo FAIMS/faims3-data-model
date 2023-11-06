@@ -279,6 +279,12 @@ export async function listRecordMetadata(
   }
 }
 
+/**
+ * Get attribute value pairs for a record
+ * @param project_id Project ID
+ * @param avp_ids Array of document ids
+ * @returns mapping of avp ID to attribute values
+ */
 export async function getAttributeValuePairs(
   project_id: ProjectID,
   avp_ids: AttributeValuePairID[]
@@ -321,6 +327,12 @@ export async function getRevisions(
   return mapping;
 }
 
+/**
+ * Get the Record documents ('rec-') for an array of record ids
+ * @param project_id Project ID
+ * @param record_ids Array of record ids
+ * @returns A map of record_id -> record
+ */
 export async function getRecords(
   project_id: ProjectID,
   record_ids: RecordID[]
@@ -342,12 +354,17 @@ export async function getRecords(
   return mapping;
 }
 
-function recordToRecordMap(old_recs: RecordMap): EncodedRecordMap {
-  const records: EncodedRecordMap = new Map();
-  for (const r in old_recs) {
-    records.set(r, old_recs[r]);
+/**
+ * Convert an object collection of records to a map
+ * @param recordsObject - object collection of records
+ * @returns a Map object record_id -> record
+ */
+function recordToRecordMap(recordsObject: RecordMap): EncodedRecordMap {
+  const recordMap: EncodedRecordMap = new Map();
+  for (const r in recordsObject) {
+    recordMap.set(r, recordsObject[r]);
   }
-  return records;
+  return recordMap;
 }
 
 export async function getAllRecords(

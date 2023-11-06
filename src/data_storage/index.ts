@@ -40,6 +40,8 @@ import {
   RevisionID,
   ProjectRevisionListing,
   RecordRevisionListing,
+  RecordMetadataList,
+  AttributeValuePair,
 } from '../types';
 import {shouldDisplayRecord} from '../index';
 import {
@@ -52,6 +54,7 @@ import {
   updateHeads,
   getHRID,
   listRecordMetadata,
+  getAllRecords,
 } from './internals';
 import {getAllRecordsOfType, getAllRecordsWithRegex} from './queries';
 import {logError} from '../logging';
@@ -425,6 +428,13 @@ export async function getRecordsByType(
   }
 }
 
+/**
+ * Remove records that are deleted or should not be displayed from a list of record metadata objects
+ * @param project_id - project identifier
+ * @param record_list - array of record metadata objects
+ * @param filter_deleted - if true, we filter out deleted records
+ * @returns an array of record metadata objects (Promise)
+ */
 async function filterRecordMetadata(
   project_id: ProjectID,
   record_list: RecordMetadata[],
@@ -488,3 +498,91 @@ export async function getRecordsWithRegex(
     return [];
   }
 }
+
+export async function getSomeRecords(
+  project_id: ProjectID,
+  limit: number,
+  bookmark: string | null = null,
+  filter_deleted = true
+) {
+  const dataDB = await getDataDB(project_id);
+  const selector: {[key: string]: any} = {
+    record_format_version: 1,
+  };
+  // if we have a bookmark, start from there
+  if (bookmark !== null) {
+    selector['_id'] = {$gt: bookmark};
+  }
+
+  const res = await dataDB.find({
+    selector: selector,
+    limit: limit,
+  });
+  const record_ids = res.docs.map((doc: any) => {
+    return doc._id;
+  });
+  const record_list = Object.values(
+    await listRecordMetadata(project_id, record_ids)
+  );
+  return await filterRecordMetadata(project_id, record_list, filter_deleted);
+}
+
+/**
+ * Return an iterator over the records in a notebook
+ * @param project_id project identifier
+ */
+export const notebookRecordIterator = async (
+  project_id: string,
+  viewID: string,
+  filter_deleted = true
+) => {
+  const batchSize = 100;
+  const getNextBatch = async (bookmark: string | null) => {
+    const records = await getSomeRecords(
+      project_id,
+      batchSize,
+      bookmark,
+      filter_deleted
+    );
+    // select just those in this view
+    return records.filter((record: any) => {
+      return record.type === viewID;
+    });
+  };
+  let records = await getNextBatch(null);
+  // deal with no records
+  if (records.length === 0) {
+    return {next: async () => ({record: null, done: true})};
+  };
+  let index = 0;
+
+  const recordIterator = {
+    async next() {
+      let record;
+      if (index < records.length) {
+        record = records[index];
+        index++;
+      } else {
+        // see if we can get more records
+        const startID = records[records.length - 1].record_id;
+        records = await getNextBatch(startID);
+        if (records.length > 0) {
+          record = records[0];
+          index = 1;
+        }
+      }
+      if (record) {
+        const data = await getFullRecordData(
+          project_id,
+          record.record_id,
+          record.revision_id,
+          true
+        );
+        return {record: data, done: false};
+      } else {
+        return {record: null, done: true};
+      }
+    },
+  };
+  return recordIterator;
+};

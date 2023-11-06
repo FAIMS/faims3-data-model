@@ -50,11 +50,18 @@ export async function getAllRecordsOfType(
   });
 }
 
+/**
+ * Get an array of records with values that match a regular expression
+ * @param project_id - Project Id
+ * @param regex - regular expression matching data values
+ * @returns an array of record objects
+ */
 export async function getAllRecordsWithRegex(
   project_id: ProjectID,
   regex: string
 ): Promise<RecordMetadataList> {
   const dataDB = await getDataDB(project_id);
+  // find avp documents with matching data, get the record ids from them
   const res = await dataDB.find({
     selector: {
       avp_format_version: 1,

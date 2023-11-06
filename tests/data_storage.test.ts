@@ -15,7 +15,7 @@
  *
  * Filename: data_storage.test.ts
  * Description:
- *   TODO
+ *   Tests of the data storage API
  */
 
 import {test, fc} from '@fast-check/jest';
@@ -27,11 +27,17 @@ import {
   getFirstRecordHead,
   getFullRecordData,
   listFAIMSProjectRevisions,
+  notebookRecordIterator,
   undeleteFAIMSDataForID,
   upsertFAIMSData,
 } from '../src/data_storage';
 import {equals} from './eqTestSupport';
-import {callbackObject, cleanDataDBS} from './mocks';
+import {
+  callbackObject,
+  cleanDataDBS,
+  createNRecords,
+  createRecord,
+} from './mocks';
 
 // register our mock database clients with the module
 registerClient(callbackObject);
@@ -299,52 +305,57 @@ describe('listing revisions', () => {
     fc.fullUnicodeString(), // namespace
     fc.fullUnicodeString(), // name
     fc.unicodeJson(), // data
-    fc.fullUnicodeString(), // userID
-    fc.date(), // time
-  ])(
-    'listing revisions',
-    async (project_id, namespace, name, data, userID, time) => {
-      fc.pre(!namespace.includes(':'));
-      fc.pre(!name.includes(':'));
-      fc.pre(namespace.trim() !== '');
-      fc.pre(name.trim() !== '');
-      try {
-        await cleanDataDBS();
-      } catch (err) {
-        fail('Failed to clean dbs');
-      }
-
-      const fullType = namespace + '::' + name;
-
-      const record_id = generateFAIMSDataID();
-
-      const doc: Record = {
-        project_id: project_id,
-        record_id: record_id,
-        revision_id: null,
-        type: fullType,
-        data: {field_name: data},
-        created_by: userID,
-        updated_by: userID,
-        created: time,
-        updated: time,
-        annotations: {},
-        field_types: {field_name: fullType},
-        relationship: undefined,
-        deleted: false,
-      };
-
-      return upsertFAIMSData(project_id, doc)
-        .then(_result => {
-          return listFAIMSProjectRevisions(project_id);
-        })
-        .then(result => {
-          expect(result[record_id]).not.toBe(undefined);
-          expect(result[record_id]).toHaveLength(1);
-          expect(result[record_id][0]).toEqual(
-            expect.stringMatching(/^frev-.*/)
-          );
-        });
+  ])('listing revisions', async (project_id, namespace, name, data) => {
+    fc.pre(!namespace.includes(':'));
+    fc.pre(!name.includes(':'));
+    fc.pre(namespace.trim() !== '');
+    fc.pre(name.trim() !== '');
+    try {
+      await cleanDataDBS();
+    } catch (err) {
+      fail('Failed to clean dbs');
     }
-  );
+
+    const fullType = namespace + '::' + name;
+
+    let record_id: string;
+    createRecord(project_id, fullType, {name: data, age: 42})
+      .then(result => {
+        record_id = result;
+        return listFAIMSProjectRevisions(project_id);
+      })
+      .then(result => {
+        expect(result[record_id]).not.toBe(undefined);
+        expect(result[record_id]).toHaveLength(1);
+        expect(result[record_id][0]).toEqual(expect.stringMatching(/^frev-.*/));
+      });
+  });
+});
+
+describe('record iterator', () => {
+  test('iterator', async () => {
+    const viewID = 'Test';
+
+    // test below, at and above the batch size of the iterator
+    const sizes = [0, 50, 100, 220, 550];
+    for (let i = 0; i < sizes.length; i++) {
+      const n = sizes[i];
+      await cleanDataDBS();
+
+      const project_id = 'test' + n;
+      await createNRecords(project_id, viewID, n);
+
+      const iterator = await notebookRecordIterator(project_id, viewID);
+
+      let {record, done} = await iterator.next();
+      let count = 0;
+      while (record && !done) {
+        count += 1;
+        const next = await iterator.next();
+        record = next.record;
+        done = next.done;
+      }
+      expect(count).toBe(n);
+    }
+  });
 });

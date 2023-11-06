@@ -19,7 +19,6 @@
  */
 import PouchDB from 'pouchdb';
 import {v4 as uuidv4} from 'uuid';
-
 import {
   FAIMSAttachmentID,
   AttributeValuePair,
@@ -63,7 +62,7 @@ export function file_data_to_attachments(
       filename: file_name,
       _attachments: {},
     };
-    // in the browser, `file` will be a File and can 
+    // in the browser, `file` will be a File and can
     // be passed as the data attribute
     // in Node, `file` will be a structure {type, data}
     // where `data` is a Buffer that we can pass in

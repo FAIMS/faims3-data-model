@@ -102,7 +102,6 @@ export interface Relationship {
 
 // end of types from datamodel/core.ts -----------------------------------------
 
-
 // types from datamodel/database.ts ----------------------------------------
 
 export interface ConnectionInfo {
@@ -442,7 +441,7 @@ export interface FAIMSPositionGeometry {
 
 // end of types from datamodel/geo.ts --------------------------------
 
-// types from datamodel/typesystems.ts --------------------------------
+// types from datamodel/typeSystems.ts --------------------------------
 
 export interface FAIMSType {
   [key: string]: any; // any for now until we lock down the json
@@ -489,7 +488,7 @@ export interface ElementOption {
   key?: string;
 }
 
-// end of types from datamodel/typesystems.ts --------------------------------
+// end of types from datamodel/typeSystems.ts --------------------------------
 
 // types from datamodel/ui.ts --------------------------------
 
@@ -605,7 +604,7 @@ export interface RecordReference {
   record_id: RecordID;
   // This is for HRIDs or other non ID descriptions of reference
   record_label: RecordID | string;
-  //this is for Lable of linked items, default: ['is related to', 'is related to']
+  //this is for Label of linked items, default: ['is related to', 'is related to']
   relation_type_vocabPair?: Array<string>;
   is_preferred?: boolean;
 }
@@ -723,4 +722,3 @@ export interface InitialMergeDetails {
   initial_head: RevisionID;
   initial_head_data: RecordMergeInformation;
 }
-
