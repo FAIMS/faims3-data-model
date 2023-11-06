@@ -42,6 +42,7 @@ import {
   getRecordsByType,
   getRecordsWithRegex,
   listFAIMSRecordRevisions,
+  notebookRecordIterator,
   setRecordAsDeleted,
   upsertFAIMSData,
 } from './data_storage';
@@ -83,6 +84,7 @@ export {
   isEqualFAIMS,
   listFAIMSRecordRevisions,
   mergeHeads,
+  notebookRecordIterator,
   resolve_project_id,
   saveUserMergeResult,
   setRecordAsDeleted,
