@@ -18,9 +18,9 @@
  *   Wrappers for logging functions for errors etc.
  */
 
-// TODO: removed bugsnag from here but the frontend will want to 
+// TODO: removed bugsnag from here but the frontend will want to
 // report errors that way - need to pass in an error logger?
 
 export const logError = (error: any) => {
-    console.error(error);
+  console.error(error);
 };

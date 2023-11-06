@@ -40,8 +40,6 @@ import {
   RevisionID,
   ProjectRevisionListing,
   RecordRevisionListing,
-  RecordMetadataList,
-  AttributeValuePair,
 } from '../types';
 import {shouldDisplayRecord} from '../index';
 import {
@@ -54,7 +52,6 @@ import {
   updateHeads,
   getHRID,
   listRecordMetadata,
-  getAllRecords,
 } from './internals';
 import {getAllRecordsOfType, getAllRecordsWithRegex} from './queries';
 import {logError} from '../logging';
@@ -553,7 +550,7 @@ export const notebookRecordIterator = async (
   // deal with no records
   if (records.length === 0) {
     return {next: async () => ({record: null, done: true})};
-  };
+  }
   let index = 0;
 
   const recordIterator = {

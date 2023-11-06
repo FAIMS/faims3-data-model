@@ -85,7 +85,7 @@ export {
   mergeHeads,
   resolve_project_id,
   saveUserMergeResult,
-  setRecordAsDeleted, 
+  setRecordAsDeleted,
   split_full_project_id,
   upsertFAIMSData,
   setAttachmentLoaderForType,
