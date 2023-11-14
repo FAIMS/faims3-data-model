@@ -359,3 +359,32 @@ describe('record iterator', () => {
     }
   });
 });
+
+// describe('record queries', () => {
+//   test('map-reduce query', async () => {
+//     const viewID = 'Test';
+//     const project_id = 'test';
+
+//     await cleanDataDBS();
+//     await createNRecords(project_id, viewID, 10);
+
+//     const db = await getDataDB(project_id);
+//     if (db) {
+//       const result = await db
+//         .query(
+//           {
+//             map: (doc: any, emit: CallableFunction) => {
+//               emit(doc.record_format_version, doc);
+//             },
+//           },
+//           {key: 1}
+//         )
+//         .catch((err: any) => {
+//           console.log('query failed', err);
+//         });
+//       console.log('query result: ', result);
+//     } else {
+//       fail('Failed to get database');
+//     }
+//   });
+// });

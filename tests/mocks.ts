@@ -1,6 +1,6 @@
 import PouchDB from 'pouchdb';
 import {DBCallbackObject, generateFAIMSDataID, upsertFAIMSData} from '../src';
-
+import {addDesignDocsForNotebook} from '../src/data_storage/databases';
 import {ProjectID, Record} from '../src/types';
 import PouchDBFind from 'pouchdb-find';
 
@@ -19,7 +19,9 @@ const getDatabase = async (databaseName: string) => {
 
 const mockGetDataDB = async (project_id: ProjectID) => {
   const databaseName = 'data-' + project_id;
-  return getDatabase(databaseName);
+  const db = await getDatabase(databaseName);
+  await addDesignDocsForNotebook(db);
+  return db;
 };
 
 const mockGetProjectDB = async (project_id: ProjectID) => {

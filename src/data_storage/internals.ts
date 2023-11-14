@@ -48,7 +48,7 @@ import {
 
 type EncodedRecordMap = Map<RecordID, EncodedRecord>;
 
-interface FormData {
+export interface FormData {
   data: {[field_name: string]: any};
   annotations: {[field_name: string]: Annotations};
   types: {[field_name: string]: FAIMSTypeName};
@@ -275,6 +275,7 @@ export async function listRecordMetadata(
     }
     return out;
   } catch (err) {
+    console.log(err);
     throw Error('failed to get metadata');
   }
 }

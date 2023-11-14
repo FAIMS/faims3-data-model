@@ -496,6 +496,35 @@ export async function getRecordsWithRegex(
   }
 }
 
+import {FormData} from './internals';
+
+const hydrateRecord = async (
+  project_id: string,
+  record: any // return type of getSomeRecords
+) => {
+  const hrid = await getHRID(project_id, record.revision);
+  const formData: FormData = await getFormDataFromRevision(
+    project_id,
+    record.revision
+  );
+  const result = {
+    project_id: project_id,
+    record_id: record.record_id,
+    revision_id: record.revision_id,
+    created_by: record.created_by,
+    updated: new Date(record.revision.created),
+    updated_by: record.revision.created_by,
+    deleted: record.revision.deleted ? true : false,
+    hrid: hrid,
+    relationship: record.revision.relationship,
+    data: formData,
+    created: new Date(record.created),
+    conflicts: record.conflict,
+    type: record.revision.type,
+  };
+  return result;
+};
+
 export async function getSomeRecords(
   project_id: ProjectID,
   limit: number,
@@ -503,25 +532,39 @@ export async function getSomeRecords(
   filter_deleted = true
 ) {
   const dataDB = await getDataDB(project_id);
-  const selector: {[key: string]: any} = {
-    record_format_version: 1,
+  const options: {[key: string]: any} = {
+    limit: limit,
+    include_docs: true,
   };
   // if we have a bookmark, start from there
   if (bookmark !== null) {
-    selector['_id'] = {$gt: bookmark};
+    options.startkey = bookmark;
   }
-
-  const res = await dataDB.find({
-    selector: selector,
-    limit: limit,
-  });
-  const record_ids = res.docs.map((doc: any) => {
-    return doc._id;
-  });
-  const record_list = Object.values(
-    await listRecordMetadata(project_id, record_ids)
-  );
-  return await filterRecordMetadata(project_id, record_list, filter_deleted);
+  try {
+    const res = await dataDB.query('index/recordRevisions', options);
+    let record_list = res.rows.map((doc: any) => {
+      return {
+        record_id: doc.id,
+        revision_id: doc.value._id,
+        created: doc.value.created,
+        conflict: doc.value.conflict,
+        type: doc.value.type,
+        revision: doc.doc,
+      };
+    });
+    if (filter_deleted) {
+      record_list = record_list.filter((record: any) => {
+        return !record.revision.deleted;
+      });
+    }
+    // don't return the first record if we have a bookmark
+    // as it will be the bookmarked record
+    if (bookmark !== null) return record_list.slice(1);
+    else return record_list;
+  } catch (err) {
+    console.log('failed to get some records', err);
+    return [];
+  }
 }
 
 /**
@@ -546,13 +589,13 @@ export const notebookRecordIterator = async (
       return record.type === viewID;
     });
   };
+
   let records = await getNextBatch(null);
   // deal with no records
   if (records.length === 0) {
     return {next: async () => ({record: null, done: true})};
   }
   let index = 0;
-
   const recordIterator = {
     async next() {
       let record;
@@ -569,12 +612,7 @@ export const notebookRecordIterator = async (
         }
       }
       if (record) {
-        const data = await getFullRecordData(
-          project_id,
-          record.record_id,
-          record.revision_id,
-          true
-        );
+        const data = hydrateRecord(project_id, record);
         return {record: data, done: false};
       } else {
         return {record: null, done: true};
