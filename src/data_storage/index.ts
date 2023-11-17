@@ -517,7 +517,9 @@ const hydrateRecord = async (
     deleted: record.revision.deleted ? true : false,
     hrid: hrid,
     relationship: record.revision.relationship,
-    data: formData,
+    data: formData.data,
+    annotations: formData.annotations,
+    types: formData.types,
     created: new Date(record.created),
     conflicts: record.conflict,
     type: record.revision.type,
@@ -612,7 +614,7 @@ export const notebookRecordIterator = async (
         }
       }
       if (record) {
-        const data = hydrateRecord(project_id, record);
+        const data = await hydrateRecord(project_id, record);
         return {record: data, done: false};
       } else {
         return {record: null, done: true};

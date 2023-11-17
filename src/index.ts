@@ -46,6 +46,7 @@ import {
   setRecordAsDeleted,
   upsertFAIMSData,
 } from './data_storage';
+import {addDesignDocsForNotebook} from './data_storage/databases';
 import {
   mergeHeads,
   findConflictingFields,
@@ -67,6 +68,7 @@ export {
   HRID_STRING,
   attachment_to_file,
   attachments_to_files,
+  addDesignDocsForNotebook,
   findConflictingFields,
   files_to_attachments,
   file_attachments_to_data,
