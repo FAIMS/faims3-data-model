@@ -27,7 +27,7 @@
 
 import {v4 as uuidv4} from 'uuid';
 
-import {getDataDB} from '../index';
+import {file_attachments_to_data, getDataDB} from '../index';
 import {DEFAULT_RELATION_LINK_VOCABULARY} from '../datamodel/core';
 import {
   FAIMSTypeName,
@@ -53,7 +53,7 @@ import {
   getHRID,
   listRecordMetadata,
 } from './internals';
-import {getAllRecordsOfType, getAllRecordsWithRegex} from './queries';
+import {getAllRecordsOfType, getAllRecordsWithRegex, queryAsMap} from './queries';
 import {logError} from '../logging';
 
 export function generateFAIMSDataID(): RecordID {
@@ -507,6 +507,7 @@ const hydrateRecord = async (
     project_id,
     record.revision
   );
+
   const result = {
     project_id: project_id,
     record_id: record.record_id,
@@ -543,20 +544,84 @@ export async function getSomeRecords(
     options.startkey = bookmark;
   }
   try {
-    const res = await dataDB.query('index/recordRevisions', options);
-    let record_list = res.rows.map((doc: any) => {
-      return {
-        record_id: doc.id,
-        revision_id: doc.value._id,
-        created: doc.value.created,
-        conflict: doc.value.conflict,
-        type: doc.value.type,
-        revision: doc.doc,
+    // get a list of revisions
+    const revisions = await dataDB.query('index/recordRevisions', options);
+
+    // collect the avp keys in these revisions
+    let avpKeys: string[] = [];
+    revisions.rows.map((row: any) => {
+      avpKeys = avpKeys.concat(Object.values(row.doc.avps));
+    });
+
+    // now grab the attachments for these avps
+    const attOptions = {
+      include_docs: true,
+      attachments: true,
+      keys: avpKeys,
+    };
+
+    const attachments = await queryAsMap(dataDB, 'index/avpAttachment', attOptions);
+    const avps = await queryAsMap(dataDB, 'index/avp', {include_docs: true, keys: avpKeys});
+
+
+    let record_list = revisions.rows.map((row: any) => {
+      const doc = row.doc;
+      const data: {[key: string]: any} = {};
+      const annotations: {[key: string]: any} = {};
+      const types: {[key: string]: string} = {};
+
+      Object.keys(doc.avps).map((key: string) => {
+        const avp = avps.get(doc.avps[key]);
+        if (avp.data != undefined) {
+          data[key] = avp.data;
+        } else {
+          // we might have an attachment
+          if (avp.faims_attachments) {
+            const attachmentList: any[] = [];
+            avp.faims_attachments.forEach((a: any) => {
+              const attachment = attachments.get(a.attachment_id);
+              if (attachment) {
+                attachmentList.push(attachment);
+              }
+            });
+            data[key] = file_attachments_to_data(avp, attachmentList).data;
+          } else {
+            data[key] = '';
+          }
+        }
+        // get annotations 
+        annotations[key] = avp.annotations;
+        // and types
+        types[key] = avp.type;
+      });
+
+      // get the HRID by finding a property starting with HRID_STRING
+      const hridKey = Object.keys(data).find((key: string) => {
+        return key.startsWith('HRID_STRING');
+      });
+
+      const result = {
+        project_id: project_id,
+        record_id: doc.record_id,
+        revision_id: doc._id,
+        created_by: doc.created_by,
+        updated: new Date(doc.created),
+        updated_by: doc.created_by,
+        deleted: doc.deleted ? true : false,
+        hrid: hridKey ? data[hridKey] : doc.record_id,
+        relationship: doc.relationship,
+        data: data,
+        annotations: annotations,
+        types: types,
+        created: new Date(row.value.created),
+        conflicts: row.value.conflict,
+        type: doc.type,
       };
+      return result;
     });
     if (filter_deleted) {
       record_list = record_list.filter((record: any) => {
-        return !record.revision.deleted;
+        return !record.deleted;
       });
     }
     // don't return the first record if we have a bookmark
@@ -580,12 +645,14 @@ export const notebookRecordIterator = async (
 ) => {
   const batchSize = 100;
   const getNextBatch = async (bookmark: string | null) => {
+    const mark = performance.now();
     const records = await getSomeRecords(
       project_id,
       batchSize,
       bookmark,
       filter_deleted
     );
+    console.log('getNextBatch', performance.now() - mark);
     // select just those in this view
     return records.filter((record: any) => {
       return record.type === viewID;
@@ -613,9 +680,8 @@ export const notebookRecordIterator = async (
           index = 1;
         }
       }
-      if (record) {
-        const data = await hydrateRecord(project_id, record);
-        return {record: data, done: false};
+      if (record) { 
+        return {record: record, done: false};
       } else {
         return {record: null, done: true};
       }

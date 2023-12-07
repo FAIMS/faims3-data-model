@@ -108,7 +108,9 @@ export function attachment_to_file(
   attachment: PouchDB.Core.Attachment
 ): File {
   const content_type = attachment.content_type;
+  console.log(attachment);
   const data = (attachment as PouchDB.Core.FullAttachment).data;
+  console.log('a2f', name, content_type, data);
   return new File([data], name, {type: content_type});
 }
 
