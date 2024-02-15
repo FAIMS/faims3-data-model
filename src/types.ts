@@ -109,6 +109,19 @@ export interface Relationship {
  * Part of the Projects DB
  * Do not use with UI code; sync code only
  */
+
+export type PossibleConnectionInfo = undefined | {
+  base_url?: string | undefined;
+  proto?: string | undefined;
+  host?: string | undefined;
+  port?: number | undefined;
+  db_name?: string | undefined;
+  auth?: {
+      username: string;
+      password: string;
+  };
+  jwt_token?: string;
+};
 export interface ProjectObject {
   _id: NonUniqueProjectID;
   name: string;
