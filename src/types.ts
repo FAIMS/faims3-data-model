@@ -412,6 +412,18 @@ export interface ProjectUIViewsets {
   };
 }
 
+export interface ConditionalExpression {
+  operator: string;
+  left?: ConditionalExpression;
+  right?: ConditionalExpression;
+  field?: string;
+  value?: any;
+}
+
+export interface RecordValues {
+  [field_name: string]: any;
+}
+
 export interface ProjectUIViews {
   [key: string]: {
     label?: string;
@@ -419,6 +431,8 @@ export interface ProjectUIViews {
     uidesign?: string;
     next_label?: string;
     is_logic?: {[key: string]: string[]}; //add for branching logic
+    condition?: ConditionalExpression;  // new conditional logic
+    conditionFn?: (v: RecordValues) => boolean;   // compiled conditional function
   };
 }
 
@@ -458,6 +472,7 @@ export interface ProjectUIModel {
   views: ProjectUIViews;
   viewsets: ProjectUIViewsets;
   visible_types: string[];
+  conditional_sources?: Set<string>;
 }
 
 export interface RecordMetadata {
