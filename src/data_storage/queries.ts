@@ -73,6 +73,30 @@ export async function getAllRecordsWithRegex(
     return avp.record_id;
   });
   // Remove duplicates, no order is implied
-  const deduped_record_ids = Array.from(new Set<RecordID>(record_ids));
-  return await listRecordMetadata(project_id, deduped_record_ids);
+  const unique_record_ids = Array.from(new Set<RecordID>(record_ids));
+  return await listRecordMetadata(project_id, unique_record_ids);
 }
+
+/**
+ * Turn a query result (array of documents) into a Map keyed by document id
+ * so that we can access results by id rather than iterating over the array
+ * to find documents.
+ *
+ * @param db a PouchDB database
+ * @param index an index on the database
+ * @param options options to pass to db.query
+ * @returns a Map with record id as keys and documents as values
+ */
+export const queryAsMap = async (
+  db: PouchDB.Database,
+  index: string,
+  options: PouchDB.Query.Options<{}, {}>
+) => {
+  const queryResult = await db.query(index, options);
+ 
+  const aMap = new Map<string, any>();
+  queryResult.rows.forEach((row: any) => {
+      aMap.set(row.doc._id, row.doc);
+    });
+  return aMap;
+};

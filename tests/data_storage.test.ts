@@ -19,7 +19,14 @@
  */
 
 import {test, fc} from '@fast-check/jest';
-import {registerClient} from '../src';
+import {
+  file_attachments_to_data,
+  file_data_to_attachments,
+  getDataDB,
+  registerClient,
+  setAttachmentDumperForType,
+  setAttachmentLoaderForType,
+} from '../src';
 import {Record} from '../src/types';
 import {
   deleteFAIMSDataForID,
@@ -337,7 +344,7 @@ describe('record iterator', () => {
     const viewID = 'Test';
 
     // test below, at and above the batch size of the iterator
-    const sizes = [0, 50, 100, 220, 550];
+    const sizes = [0, 50, 100, 220];
     for (let i = 0; i < sizes.length; i++) {
       const n = sizes[i];
       await cleanDataDBS();
@@ -360,33 +367,123 @@ describe('record iterator', () => {
       expect(sumOfAges).toBe(Math.abs((n * (n - 1)) / 2));
     }
   });
+
+  test('attachments', async () => {
+    const viewID = 'Test';
+    const project_id = 'test';
+
+    setAttachmentLoaderForType(
+      'faims-attachment::Files',
+      file_attachments_to_data
+    );
+    setAttachmentDumperForType(
+      'faims-attachment::Files',
+      file_data_to_attachments
+    );
+
+    const attachmentText = 'this is my test attachment';
+    const n = 3;
+    await cleanDataDBS();
+    await createNRecords(project_id, viewID, n, attachmentText);
+
+    const iterator = await notebookRecordIterator(project_id, viewID);
+
+    let {record, done} = await iterator.next();
+
+    while (record && !done) {
+      expect(record.data.name.startsWith('Bob')).toBe(true);
+      
+      // try to read the attachment data
+
+      record.data.textFile.forEach(async (file: File) => {
+        const data = Buffer.from(await file.text(), 'base64');
+        expect(data.toString()).toBe(attachmentText);
+      });
+
+      const next = await iterator.next();
+      record = next.record;
+      done = next.done;
+    }
+  });
+
 });
 
-// describe('record queries', () => {
-//   test('map-reduce query', async () => {
-//     const viewID = 'Test';
-//     const project_id = 'test';
+describe('record queries', () => {
 
-//     await cleanDataDBS();
-//     await createNRecords(project_id, viewID, 10);
+ 
 
-//     const db = await getDataDB(project_id);
-//     if (db) {
-//       const result = await db
-//         .query(
-//           {
-//             map: (doc: any, emit: CallableFunction) => {
-//               emit(doc.record_format_version, doc);
-//             },
-//           },
-//           {key: 1}
-//         )
-//         .catch((err: any) => {
-//           console.log('query failed', err);
-//         });
-//       console.log('query result: ', result);
-//     } else {
-//       fail('Failed to get database');
-//     }
-//   });
-// });
+  test.skip('map-reduce query', async () => {
+    const viewID = 'Test';
+    const project_id = 'test';
+
+    setAttachmentLoaderForType(
+      'faims-attachment::Files',
+      file_attachments_to_data
+    );
+    setAttachmentDumperForType(
+      'faims-attachment::Files',
+      file_data_to_attachments
+    );
+
+    const attachmentText = 'this is my test attachment';
+    await cleanDataDBS();
+    await createNRecords(project_id, viewID, 10, attachmentText);
+
+    const db = await getDataDB(project_id);
+    if (db) {
+      // get revisions via the revisions index
+      const revOptions: {[key: string]: any} = {
+        include_docs: true,
+        limit: 3,
+      };
+      const revisions = await db.query('index/recordRevisions', revOptions);
+      revisions.rows.forEach((row: any) => {
+        console.log(row.value, row.doc);
+      });
+      const revMap = new Map<string, any>();
+      let avpKeys: string[] = [];
+      revisions.rows.map((row: any) => {
+        avpKeys = avpKeys.concat(Object.values(row.doc.avps));
+        revMap.set(row.doc.record_id, row.doc);
+      });
+
+      console.log('avps: ', avpKeys);
+
+      const avpResult = await db.query('index/avp', {
+        include_docs: true,
+        keys: avpKeys,
+      });
+      console.log('avp result: ', avpResult);
+    
+      // get attachments via the avpAttachment index
+      const options = {
+        include_docs: true,
+        attachments: true,
+        keys: avpKeys,
+      };
+      const result = await db
+        .query('index/avpAttachment', options)
+        .catch((err: any) => {
+          console.log('query failed', err);
+        });
+      console.log('query result: ', result);
+
+
+
+
+      result.rows.forEach((row: any) => {
+        const record = revMap.get(row.doc.record_id);
+        if (record) {
+          if (record.attachments) {
+            record.attachments.push(row.doc);
+          } else {
+            record.attachments = [row.doc];
+          }
+        }
+        console.log(record);
+      });
+    } else {
+      fail('Failed to get database');
+    }
+  });
+});

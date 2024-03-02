@@ -522,6 +522,7 @@ async function loadAttributeValuePair(
   project_id: ProjectID,
   avp: AttributeValuePair
 ): Promise<AttributeValuePair> {
+  const mark = performance.now();
   const attach_refs = avp.faims_attachments;
   if (attach_refs === null || attach_refs === undefined) {
     // No attachments
@@ -547,6 +548,7 @@ async function loadAttributeValuePair(
       attach_docs.push(doc);
     }
   });
+  console.log('loadAVP', performance.now() - mark);
   return loader(avp, attach_docs);
 }
 
