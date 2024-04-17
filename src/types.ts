@@ -414,8 +414,7 @@ export interface ProjectUIViewsets {
 
 export interface ConditionalExpression {
   operator: string;
-  left?: ConditionalExpression;
-  right?: ConditionalExpression;
+  conditions?: ConditionalExpression[];
   field?: string;
   value?: any;
 }
