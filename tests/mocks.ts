@@ -58,8 +58,25 @@ export const callbackObject: DBCallbackObject = {
 export const createRecord = async (
   project_id: string,
   viewID: string,
-  data: {name: string; age: number}
+  data: {name: string; age: number; textFile?: any},
+  attachment: string = ''
 ) => {
+  const fieldTypes: {name: string; age: string; textFile?: string} = {
+    name: 'faims::string',
+    age: 'faims::integer',
+  };
+
+  if (attachment != '') {
+    data['textFile'] = [
+      {
+        name: 'test_attachment.txt',
+        type: 'text/plain',
+        data: Buffer.from(attachment),
+      },
+    ];
+    fieldTypes['textFile'] = 'faims-attachment::Files';
+  }
+
   const userID = 'user';
   const doc: Record = {
     project_id: project_id,
@@ -72,10 +89,7 @@ export const createRecord = async (
     created: new Date(),
     updated: new Date(),
     annotations: {},
-    field_types: {
-      name: 'faims::string',
-      age: 'faims::integer',
-    },
+    field_types: fieldTypes,
     relationship: undefined,
     deleted: false,
   };
@@ -86,9 +100,15 @@ export const createRecord = async (
 export const createNRecords = async (
   project_id: string,
   viewID: string,
-  n: number
+  n: number,
+  attachment: string = ''
 ) => {
   for (let i = 0; i < n; i++) {
-    await createRecord(project_id, viewID, {name: `Bob ${i}`, age: i});
+    await createRecord(
+      project_id,
+      viewID,
+      {name: `Bob ${i}`, age: i},
+      attachment
+    );
   }
 };

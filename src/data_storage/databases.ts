@@ -104,6 +104,14 @@ export const addDesignDocsForNotebook = async (
                   }
               }`,
       },
+      avpAttachment: {
+        map: `function (doc) {
+            if (doc.avp_format_version === 1 && doc.faims_attachments)
+                 doc.faims_attachments.forEach((att) => {
+                     emit(doc._id, {_id: att.attachment_id});
+                 });
+            }`,
+      },
       revision: {
         map: 'function (doc) {\n  if (doc.revision_format_version === 1)  \n    emit(doc._id, 1);\n}',
       },
@@ -126,7 +134,7 @@ export const addDesignDocsForNotebook = async (
         documents[i]['_rev'] = existing['_rev'];
         // are they the same?
         if (isEqualObjects(existing, documents[i])) {
-          return;
+          continue;
         }
       }
       await dataDB.put(documents[i]);
