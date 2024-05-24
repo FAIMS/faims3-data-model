@@ -44,7 +44,7 @@ import {
 import {shouldDisplayRecord} from '../index';
 import {
   addNewRevisionFromForm,
-  createNewRecord,
+  createNewRecordIfMissing,
   generateFAIMSRevisionID,
   getRecord,
   getRevision,
@@ -89,8 +89,7 @@ export async function upsertFAIMSData(
   }
   const revision_id = generateFAIMSRevisionID();
   if (record.revision_id === null) {
-    // console.info('New record', record);
-    await createNewRecord(project_id, record, revision_id);
+    await createNewRecordIfMissing(project_id, record, revision_id);
     await addNewRevisionFromForm(project_id, record, revision_id);
   } else {
     // console.info('Update existing record', record);

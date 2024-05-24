@@ -491,7 +491,9 @@ async function addNewAttributeValuePairs(
   return avp_map;
 }
 
-export async function createNewRecord(
+// add a new empty record if not already present
+// used to initialise a new record before data is added with addNewRevisionFromForm
+export async function createNewRecordIfMissing(
   project_id: ProjectID,
   record: Record,
   revision_id: RevisionID
@@ -509,9 +511,8 @@ export async function createNewRecord(
   try {
     await dataDB.put(new_encoded_record);
   } catch (err) {
-    // TODO: add proper error handling for conflicts
-    console.warn(err);
-    throw Error('failed to create record document');
+    // if there was an error then the document exists
+    // already which is fine
   }
 }
 
