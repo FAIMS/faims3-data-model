@@ -555,7 +555,8 @@ export async function getSomeRecords(
     });
     if (filter_deleted) {
       record_list = record_list.filter((record: any) => {
-        return !record.revision.deleted;
+        // guarding against there being no revision which should not happen but has
+        return !record.revision?.deleted;
       });
     }
     // don't return the first record if we have a bookmark
