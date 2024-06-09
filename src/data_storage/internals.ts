@@ -249,14 +249,14 @@ export async function listRecordMetadata(
     for (const [record_id, record] of records) {
       const revision_id = record.heads[0];
       const revision = revisions[revision_id];
-      if (revision === undefined) {
+      if (!revision) {
         // We don't have that revision, so skip
         continue;
       }
       const hrid =
-        revision === undefined
-          ? record_id
-          : (await getHRID(project_id, revision)) ?? record_id;
+        revision
+          ? (await getHRID(project_id, revision)) ?? record_id
+          : record_id;
 
       out[record_id] = {
         project_id: project_id,
